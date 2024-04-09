@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+    <head>
+        <meta charset = "UTF-8">
+        <meta name = "Description" content = "Cristian D. Conte - Computer Engineer">
+        <meta name = "viewport" content = "width=device-width, initial-scale=1.0">
+        <title>Cristian D. Conte</title>
+    
+        <script async type="module" src="./algorithms/linear.js"></script>
+        
+		<!-- Preload resources -->
+		<link rel = "preload" href = "./index.css" as = "style"/>
+
+		<!-- Load the stylesheets -->
+		<link rel = "stylesheet" type = "text/css" href = "./index.css"/>
+    </head>
+
+    <body>
+        <div id = "page1">
+        </div>
+    </body>
+</html>
+
+<script type = "module">
+    import {
+        linear 
+    } from "./algorithms/linear.js";
+
+    window.addEventListener("load", () => {
+        //Create page 1 elements
+        const page1_name_arr = "Cristian D. Conte".split("");
+        const page1_title_arr = "Computer Engineer".split("");
+        const page1_els_arr = page1_name_arr.concat(page1_title_arr);
+
+        let create_el_fun = (el_str, idx) => {
+            let p_el = document.createElement("p");
+
+            p_el.className = "page1_name_char_p";
+            p_el.setAttribute("data-idx", idx);
+            p_el.innerText = el_str;
+
+            return p_el;
+        }
+
+        let page1_els = linear(page1_els_arr, create_el_fun);
+        
+        linear(page1_els, (el) => document.getElementById("page1").appendChild(el));
+
+        //Create page 1 effects
+        
+    
+    });
+</script>
