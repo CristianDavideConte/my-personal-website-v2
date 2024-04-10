@@ -1,5 +1,6 @@
-export const LESSER_OR_EQUAL_FLAG = 0;
-export const HIGHER_OR_EQUAL_FLAG = 1;
+export const LESSER_FLAG = -1;
+export const EQUAL_FLAG = 0;
+export const HIGHER_FLAG = 1;
 
 const swap = (arr, i, j) => {
     const temp = arr[i];
@@ -8,30 +9,43 @@ const swap = (arr, i, j) => {
 }
 
 const quicksort_partition = (arr, compare, callback, start, end)  => {
-    let middle = (start + end) / 2;
-    let done = false;
+    let pivot = arr[end];
+    let cmp_res;
 
-    while (!done) {
-        while (compare(arr[end], arr[middle]) == LESSER_OR_EQUAL_FLAG) end--;        
-        while (compare(arr[start], arr[middle]) == HIGHER_OR_EQUAL_FLAG) start++;
-        
-        if (start < end) {
-            swap(arr, start, end);
-        } else {
-            done = true;
+    start--;
+
+    for (let i = start + 1; i < end; i++) {
+        cmp_res = compare(arr[i], pivot);
+
+        if (cmp_res == LESSER_FLAG || cmp_res == EQUAL_FLAG) {
+            start++;
+            swap(arr, start, i);
         }
     }
 
+    swap(arr, start + 1, end);    
+
     callback();
 
-    return end;
+    return start + 1;
 }
 
 export const quicksort = (arr = [], compare, callback, start, end) => {
-    if (start >= end) return arr;
+    if (start >= end) return;
+
+    console.log(start, end)
     
     const m = quicksort_partition(arr, compare, callback, start, end);
-    quicksort(arr, compare, callback, start, m);
+    quicksort(arr, compare, callback, start, m - 1);
     quicksort(arr, compare, callback, m + 1, end);
+}
+
+
+/* Randomize array in-place using Durstenfeld shuffle algorithm */
+export function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        swap(arr, i, j);
+    }
 }
 

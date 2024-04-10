@@ -25,6 +25,14 @@
         linear 
     } from "./algorithms/linear.js";
 
+    import {
+        shuffle, 
+        quicksort,
+        LESSER_FLAG,
+        HIGHER_FLAG,
+        EQUAL_FLAG,
+    } from "./algorithms/sorting.js";
+
     window.addEventListener("load", () => {
         //Create page 1 elements
         const page1_name_arr = "Cristian D. Conte".split("");
@@ -43,6 +51,17 @@
 
         let page1_els = linear(page1_els_arr, create_el_fun);
         
+        shuffle(page1_els);
+
+        quicksort(page1_els, (el1, el2) => {
+            const el1_idx = Number.parseInt(el1.getAttribute("data-idx"));
+            const el2_idx = Number.parseInt(el2.getAttribute("data-idx"));
+
+            if(el1_idx < el2_idx) return LESSER_FLAG;
+            if(el1_idx > el2_idx) return HIGHER_FLAG;
+            return EQUAL_FLAG;
+        }, () => {}, 0, page1_els.length - 1);
+
         linear(page1_els, (el) => document.getElementById("page1").appendChild(el));
 
         //Create page 1 effects
