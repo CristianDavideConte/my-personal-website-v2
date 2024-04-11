@@ -2,13 +2,13 @@ export const LESSER_FLAG = -1;
 export const EQUAL_FLAG = 0;
 export const HIGHER_FLAG = 1;
 
-const swap = (arr, i, j) => {
+export const swap = (arr, i, j) => {
     const temp = arr[i];
     arr[i] = arr[j];
     arr[j] = temp;
 }
 
-const quicksort_partition = (arr, compare, callback, start, end)  => {
+const quicksort_partition = (arr, compare, custom_swap = swap, start, end)  => {
     let pivot = arr[end];
     let cmp_res;
 
@@ -19,13 +19,11 @@ const quicksort_partition = (arr, compare, callback, start, end)  => {
 
         if (cmp_res == LESSER_FLAG || cmp_res == EQUAL_FLAG) {
             start++;
-            swap(arr, start, i);
+            custom_swap(arr, start, i);
         }
     }
 
-    swap(arr, start + 1, end);    
-
-    callback();
+    custom_swap(arr, start + 1, end);    
 
     return start + 1;
 }
@@ -33,8 +31,6 @@ const quicksort_partition = (arr, compare, callback, start, end)  => {
 export const quicksort = (arr = [], compare, callback, start, end) => {
     if (start >= end) return;
 
-    console.log(start, end)
-    
     const m = quicksort_partition(arr, compare, callback, start, end);
     quicksort(arr, compare, callback, start, m - 1);
     quicksort(arr, compare, callback, m + 1, end);
@@ -42,10 +38,10 @@ export const quicksort = (arr = [], compare, callback, start, end) => {
 
 
 /* Randomize array in-place using Durstenfeld shuffle algorithm */
-export function shuffle(arr) {
+export function shuffle(arr, custom_swap = swap) {
     for (let i = arr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        swap(arr, i, j);
+        custom_swap(arr, i, j);
     }
 }
 
