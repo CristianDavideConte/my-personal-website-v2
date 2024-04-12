@@ -38,13 +38,19 @@
         //Create page 1 elements
         const page1_name_arr = "Cristian D. Conte".split("");
         const page1_title_arr = "Computer Engineer".split("");
-        const page1_els_arr = page1_name_arr.concat(page1_title_arr);
+        let page1_els_arr = page1_name_arr.concat(page1_title_arr);
 
         let create_el_fun = (el_str, idx) => {
             let p_el = document.createElement("p");
 
             p_el.className = "page1_name_char_p";
+
             p_el.setAttribute("data-idx", idx);
+            p_el.setAttribute("data-delta-x", 0);
+            p_el.setAttribute("data-delta-y", 0);
+            p_el.setAttribute("data-init-pos-x", "-");
+            p_el.setAttribute("data-init-pox-y", "-");
+
             p_el.innerText = el_str;
 
             return p_el;
@@ -54,51 +60,70 @@
         
         const custom_swap_shuffling = (arr, i, j) => {
             swap(arr, i, j);
-            
-            let x, y, z;
-
-            x = 100 * (Math.random() - Math.random()) + "px";
-            y = 100 * (Math.random() - Math.random()) + "px";
-            z = 100 * (Math.random() - Math.random()) + "px";
-            arr[i].style.transform = `translate3d(${x}, ${y}, ${z})`;
-
-            x = 100 * (Math.random() - Math.random()) + "px";
-            y = 100 * (Math.random() - Math.random()) + "px";
-            z = 100 * (Math.random() - Math.random()) + "px";
-            arr[j].style.transform = `translate3d(${x}, ${y}, ${z})`;
         };
 
-        let seconds = 0;
+        let milliseconds = 0;
+        let increase = 100;
         const custom_swap_sorting = (arr, i, j) => {
-            swap(arr, i, j);
+            if(i == j) return;
             
+            const arr_i = arr[i];
+            const arr_j = arr[j];
+
+            let arr_i_pos, arr_j_pos;
+
+            if(arr_i.getAttribute("data-init-pos-x") == "-") {
+                arr_i_pos = arr_i.getBoundingClientRect();
+                arr_i.setAttribute("data-init-pos-x", arr_i_pos.x);
+                arr_i.setAttribute("data-init-pos-y", arr_i_pos.y);
+            } else {
+                arr_i_pos = {
+                    x: Number.parseInt(arr_i.getAttribute("data-init-pos-x")),
+                    y: Number.parseInt(arr_i.getAttribute("data-init-pos-y")),
+                }
+            }
+
+            if(arr_j.getAttribute("data-init-pos-x") == "-") {
+                arr_j_pos = arr_j.getBoundingClientRect();
+                arr_j.setAttribute("data-init-pos-x", arr_j_pos.x);
+                arr_j.setAttribute("data-init-pos-y", arr_j_pos.y);
+            } else {
+                arr_j_pos = {
+                    x: Number.parseInt(arr_j.getAttribute("data-init-pos-x")),
+                    y: Number.parseInt(arr_j.getAttribute("data-init-pos-y")),
+                }
+            }
+
+            const arr_i_old_delta_x = Number.parseInt(arr_i.getAttribute("data-delta-x"));
+            const arr_i_old_delta_y = Number.parseInt(arr_i.getAttribute("data-delta-y"));
+            const arr_j_old_delta_x = Number.parseInt(arr_j.getAttribute("data-delta-x"));
+            const arr_j_old_delta_y = Number.parseInt(arr_j.getAttribute("data-delta-y"));
+            
+            const delta_x = Math.round(arr_i_pos.x + arr_i_old_delta_x - arr_j_pos.x - arr_j_old_delta_x);
+            const delta_y = Math.round(arr_i_pos.y + arr_i_old_delta_y - arr_j_pos.y - arr_j_old_delta_y);
+
+            const arr_i_transform = `translate3d(${arr_i_old_delta_x - delta_x}px, ${arr_i_old_delta_y - delta_y}px, 0px)`;
+            const arr_j_transform = `translate3d(${arr_j_old_delta_x + delta_x}px, ${arr_j_old_delta_y + delta_y}px, 0px)`;
+            
+            arr_i.setAttribute("data-delta-x", arr_i_old_delta_x - delta_x);
+            arr_i.setAttribute("data-delta-y", arr_i_old_delta_y - delta_y);
+            arr_j.setAttribute("data-delta-x", arr_j_old_delta_x + delta_x);
+            arr_j.setAttribute("data-delta-y", arr_j_old_delta_y + delta_y);
+
+            swap(arr, i, j);
+
+            milliseconds += increase; //TODO: add a proper easing
+            //increase /= 1.04;
+
             setTimeout(() => {
-                const tmp = arr[i].style;
-                arr[j].style.transform = arr[i].style.transform;
-                arr[i].style.transform = tmp;
-                
-                const old_arr_i_style = arr[i].style.transform;
-                const old_arr_j_style = arr[j].style.transform;
-
-                //arr[i] is in the correct array position, 
-                //move it visually to the correct place
-                if(Number.parseInt(arr[i].getAttribute("data-idx")) === i) {
-                    arr[i].style.transform = "";
-                }
-
-                //arr[j] is in the correct array position, 
-                //move it visually to the correct place
-                if(Number.parseInt(arr[j].getAttribute("data-idx")) === j) {
-                    arr[j].style.transform = "";
-                }
-                
-                if(old_arr_i_style != arr[i].style.transform || old_arr_j_style != arr[j].style.transform) {
-                    seconds++;
-                }
-            }, seconds * 1000); //TODO: add easing and an animation offset
+                arr_i.style.transform = arr_i_transform;
+                arr_j.style.transform = arr_j_transform;
+            }, milliseconds);
         };
 
         shuffle(page1_els, custom_swap_shuffling);
+        
+        linear(page1_els, (el) => document.getElementById("page1").appendChild(el));
         
         quicksort(
             page1_els,
@@ -106,16 +131,12 @@
                 const el1_idx = Number.parseInt(el1.getAttribute("data-idx"));
                 const el2_idx = Number.parseInt(el2.getAttribute("data-idx"));
 
-                if(el1_idx < el2_idx) return LESSER_FLAG;
-                if(el1_idx > el2_idx) return HIGHER_FLAG;
-                return EQUAL_FLAG;
+                return el1_idx < el2_idx ? LESSER_FLAG : HIGHER_FLAG;
             },
             custom_swap_sorting,
             0, 
             page1_els.length - 1
         );
-
-        linear(page1_els, (el) => document.getElementById("page1").appendChild(el));
         
         //Create page 1 effects
         

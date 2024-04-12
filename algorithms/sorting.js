@@ -17,7 +17,7 @@ const quicksort_partition = (arr, compare, custom_swap = swap, start, end)  => {
     for (let i = start + 1; i < end; i++) {
         cmp_res = compare(arr[i], pivot);
 
-        if (cmp_res == LESSER_FLAG || cmp_res == EQUAL_FLAG) {
+        if (cmp_res == LESSER_FLAG) {
             start++;
             custom_swap(arr, start, i);
         }
