@@ -5,6 +5,7 @@
         <meta name = "viewport" content = "width=device-width, initial-scale=1.0">
         <title>Cristian D. Conte</title>
     
+        <script async type="module" src="./dsa/doubly_linked_list.js"></script>
         <script async type="module" src="./algorithms/linear.js"></script>
         
 		<!-- Preload resources -->
@@ -15,12 +16,20 @@
     </head>
 
     <body>
-        <div id = "page1">
-        </div>
+        <div id = "page1"></div>
+        <div id = "page3"></div>
     </body>
 </html>
 
 <script type = "module">
+    import {
+        DoublyLinkedList,
+    } from "./dsa/doubly_linked_list.js";
+
+    import {
+        IterableArray,
+    } from "./dsa/iterable_array.js";
+
     import {
         linear 
     } from "./algorithms/linear.js";
@@ -54,10 +63,11 @@
             p_el.innerText = el_str;
 
             return p_el;
-        }
+        }; // TODO: Create factories for turning data into visual elements
 
         let page1_els = linear(page1_els_arr, create_el_fun);
         
+        //Create page 1 effects
         const custom_swap_shuffling = (arr, i, j) => {
             swap(arr, i, j);
         };
@@ -113,7 +123,7 @@
             swap(arr, i, j);
 
             milliseconds += increase; //TODO: add a proper easing
-            //increase /= 1.04;
+            //increase -= 1;
 
             setTimeout(() => {
                 arr_i.style.transform = arr_i_transform;
@@ -138,8 +148,67 @@
             page1_els.length - 1
         );
         
-        //Create page 1 effects
+
+        // Create page 2 elements
+        const experiences_arr = [
+            {
+                value: ["Professional Experience"] // FIRST NODE
+            }, 
+            {
+                value: ["2016", "I.T. Technician", "S.i.c.o.t. S.R.L."] 
+            }, 
+            {
+                value: ["2017", "I.T. Technician", "Lugo Town Hall"] 
+            }, 
+            {
+                value: ["2022", "Web Developer", "Il BuonLatte"] 
+            }, 
+            {
+                value: ["2023", "AI / ML Engineer Intern", "SpecialVideo S.R.L."] 
+            },
+            {
+                value: ["Null"] // LAST NODE
+            }
+        ];
+
+        let head = null;
+        let curr_node = null;
+        const create_linked_list = (el) => {
+            const new_node = new DoublyLinkedList(el.value);
+
+            if(!head) {
+                head = new_node;
+                curr_node = head;
+                return;
+            }
+
+            const tmp = curr_node;
+            curr_node._next = new_node;
+            curr_node = new_node;
+            curr_node._prev = tmp;
+        }; // TODO: turn this into a proper factory
         
-    
+        const create_visual_node = (node) => {
+            let div_el = document.createElement("div");
+
+            for(const val of node.value) {
+                let p_el = document.createElement("p");
+
+                p_el.className = "experiences_node_internal_p";
+                p_el.innerText = val;
+
+                div_el.appendChild(p_el);
+            }
+
+            return div_el;
+        }; // TODO: turn this into a proper factory
+
+        let test_arr = new IterableArray(experiences_arr);  
+        test_arr.iterate(create_linked_list);
+        
+        //linear(experiences_arr, create_linked_list);
+        
+        head.iterate((el, idx) => console.log(el, idx));
+        
     });
 </script>

@@ -10,4 +10,4 @@ export const linear = (arr = [], fun = () => { }, start_idx = 0) => {
     }
 
     return new_arr;
-}
+} // TODO: move from array (arr) to iterator, so that arrays, linked lists, and collections of classes are all compatible
