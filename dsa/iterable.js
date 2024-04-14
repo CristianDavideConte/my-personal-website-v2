@@ -1,7 +1,7 @@
 export class Iterable { // Abstract class
     get iterator() { return null };
 
-    iterate(callback = () => { }) {
+    forEach(callback = () => { }) {
         const iterator = this.iterator;
         let curr_item = iterator.next();
         let idx = 0;

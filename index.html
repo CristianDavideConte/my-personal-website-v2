@@ -189,9 +189,13 @@
         }; // TODO: turn this into a proper factory
         
         const create_visual_node = (node) => {
+            let container_el = document.createElement("div");
             let div_el = document.createElement("div");
 
-            for(const val of node.value) {
+            container_el.className = "experiences_node_container";
+            div_el.className = "experiences_node";
+
+            for(const val of node.value()) {
                 let p_el = document.createElement("p");
 
                 p_el.className = "experiences_node_internal_p";
@@ -199,16 +203,44 @@
 
                 div_el.appendChild(p_el);
             }
+            
+            //If there's a previous node, append a visual node 
+            //that allows to go to the previous node if interacted with
+            if(node.prev()) {
+                let arr_el = document.createElement("div");
+                
+                arr_el.innerHTML = "&larr;";
+                arr_el.className = "experiences_node_prev_arr";
 
-            return div_el;
+                arr_el.addEventListener("click", (event) => {
+                    arr_el.parentElement.previousElementSibling.scrollIntoView({ behavior: "smooth", inline: "center" });
+                }); //TODO: use USS && add arrows appearing and disappearing effects
+
+                container_el.appendChild(arr_el);
+            }
+
+            container_el.appendChild(div_el);
+
+            //If there's a next 
+            if(node.next()) {
+                let arr_el = document.createElement("div");
+
+                arr_el.innerHTML = "&rarr;";
+                arr_el.className = "experiences_node_next_arr";
+                
+                arr_el.addEventListener("click", (event) => {
+                    arr_el.parentElement.nextElementSibling.scrollIntoView({ behavior: "smooth", inline: "center" });
+                }); //TODO: use USS && add arrows appearing and disappearing effects
+
+                container_el.appendChild(arr_el);
+            }
+
+            return container_el;
         }; // TODO: turn this into a proper factory
 
         let test_arr = new IterableArray(experiences_arr);  
-        test_arr.iterate(create_linked_list);
+        test_arr.forEach(create_linked_list);
         
-        //linear(experiences_arr, create_linked_list);
-        
-        head.iterate((el, idx) => console.log(el, idx));
-        
+        head.forEach((el, idx) => document.getElementById("page3").appendChild(create_visual_node(el)));
     });
 </script>
