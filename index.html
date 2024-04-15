@@ -12,6 +12,7 @@
         <script async type="module" src="./algorithms/linear.js"></script>
         <script async type="module" src="./algorithms/sorting.js"></script>
         <script async type="module" src="./algorithms/graph_exploration/dfs.js"></script>
+        <script async type="module" src="./algorithms/graph_exploration/bfs.js"></script>
         
 		<!-- Preload resources -->
 		<link rel = "preload" href = "./index.css" as = "style"/>
@@ -48,6 +49,10 @@
     import {
         DFSStrategy
     } from "./algorithms/graph_exploration/dfs.js";
+
+    import {
+        BFSStrategy
+    } from "./algorithms/graph_exploration/bfs.js";
 
     import {
         swap,
@@ -371,9 +376,12 @@
 
 
         {   
+
             //Page 4 elements
             const adj_list = [[1,2],[2,3],[3,4],[4,1], [5,1]]; 
-            const strategy = new DFSStrategy();
+            //const strategy = new DFSStrategy();
+            const strategy = new BFSStrategy();
+
             const graph = new Graph(adj_list, strategy); 
 
             graph.forEach((el, idx) => console.log(el));

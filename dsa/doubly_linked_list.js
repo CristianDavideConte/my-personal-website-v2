@@ -7,7 +7,7 @@ export class DoublyLinkedList extends Iterable {
     _prev;
     _next;
 
-    constructor(value, prev = null, next = null) {
+    constructor(value = null, prev = null, next = null) {
         super();
 
         this._value = value;
