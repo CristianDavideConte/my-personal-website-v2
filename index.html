@@ -5,8 +5,13 @@
         <meta name = "viewport" content = "width=device-width, initial-scale=1.0">
         <title>Cristian D. Conte</title>
     
+        <script async type="module" src="./dsa/iterable_array.js"></script>
         <script async type="module" src="./dsa/doubly_linked_list.js"></script>
+        <script async type="module" src="./dsa/graph.js"></script>
+
         <script async type="module" src="./algorithms/linear.js"></script>
+        <script async type="module" src="./algorithms/sorting.js"></script>
+        <script async type="module" src="./algorithms/graph_exploration/dfs.js"></script>
         
 		<!-- Preload resources -->
 		<link rel = "preload" href = "./index.css" as = "style"/>
@@ -17,22 +22,32 @@
 
     <body>
         <div id = "page1"></div>
+        <div id = "page2"></div>
         <div id = "page3"></div>
+        <div id = "page4"></div>
     </body>
 </html>
 
 <script type = "module">
     import {
-        DoublyLinkedList,
-    } from "./dsa/doubly_linked_list.js";
-
-    import {
         IterableArray,
     } from "./dsa/iterable_array.js";
 
     import {
+        DoublyLinkedList,
+    } from "./dsa/doubly_linked_list.js";
+
+    import {
+        Graph,
+    } from "./dsa/graph.js";
+
+    import {
         linear 
     } from "./algorithms/linear.js";
+    
+    import {
+        DFSStrategy
+    } from "./algorithms/graph_exploration/dfs.js";
 
     import {
         swap,
@@ -44,203 +59,324 @@
     } from "./algorithms/sorting.js";
 
     window.addEventListener("load", () => {
-        //Create page 1 elements
-        const page1_name_arr = "Cristian D. Conte".split("");
-        const page1_title_arr = "Computer Engineer".split("");
-        let page1_els_arr = page1_name_arr.concat(page1_title_arr);
+        {
+            //Create page 1 elements
+            const page1_name_arr = "Cristian D. Conte".split("");
+            const page1_title_arr = "Computer Engineer".split("");
+            let page1_els_arr = page1_name_arr.concat(page1_title_arr);
 
-        let create_el_fun = (el_str, idx) => {
-            let p_el = document.createElement("p");
-
-            p_el.className = "page1_name_char_p";
-
-            p_el.setAttribute("data-idx", idx);
-            p_el.setAttribute("data-delta-x", 0);
-            p_el.setAttribute("data-delta-y", 0);
-            p_el.setAttribute("data-init-pos-x", "-");
-            p_el.setAttribute("data-init-pox-y", "-");
-
-            p_el.innerText = el_str;
-
-            return p_el;
-        }; // TODO: Create factories for turning data into visual elements
-
-        let page1_els = linear(page1_els_arr, create_el_fun);
-        
-        //Create page 1 effects
-        const custom_swap_shuffling = (arr, i, j) => {
-            swap(arr, i, j);
-        };
-
-        let milliseconds = 0;
-        let increase = 100;
-        const custom_swap_sorting = (arr, i, j) => {
-            if(i == j) return;
-            
-            const arr_i = arr[i];
-            const arr_j = arr[j];
-
-            let arr_i_pos, arr_j_pos;
-
-            if(arr_i.getAttribute("data-init-pos-x") == "-") {
-                arr_i_pos = arr_i.getBoundingClientRect();
-                arr_i.setAttribute("data-init-pos-x", arr_i_pos.x);
-                arr_i.setAttribute("data-init-pos-y", arr_i_pos.y);
-            } else {
-                arr_i_pos = {
-                    x: Number.parseInt(arr_i.getAttribute("data-init-pos-x")),
-                    y: Number.parseInt(arr_i.getAttribute("data-init-pos-y")),
-                }
-            }
-
-            if(arr_j.getAttribute("data-init-pos-x") == "-") {
-                arr_j_pos = arr_j.getBoundingClientRect();
-                arr_j.setAttribute("data-init-pos-x", arr_j_pos.x);
-                arr_j.setAttribute("data-init-pos-y", arr_j_pos.y);
-            } else {
-                arr_j_pos = {
-                    x: Number.parseInt(arr_j.getAttribute("data-init-pos-x")),
-                    y: Number.parseInt(arr_j.getAttribute("data-init-pos-y")),
-                }
-            }
-
-            const arr_i_old_delta_x = Number.parseInt(arr_i.getAttribute("data-delta-x"));
-            const arr_i_old_delta_y = Number.parseInt(arr_i.getAttribute("data-delta-y"));
-            const arr_j_old_delta_x = Number.parseInt(arr_j.getAttribute("data-delta-x"));
-            const arr_j_old_delta_y = Number.parseInt(arr_j.getAttribute("data-delta-y"));
-            
-            const delta_x = Math.round(arr_i_pos.x + arr_i_old_delta_x - arr_j_pos.x - arr_j_old_delta_x);
-            const delta_y = Math.round(arr_i_pos.y + arr_i_old_delta_y - arr_j_pos.y - arr_j_old_delta_y);
-
-            const arr_i_transform = `translate3d(${arr_i_old_delta_x - delta_x}px, ${arr_i_old_delta_y - delta_y}px, 0px)`;
-            const arr_j_transform = `translate3d(${arr_j_old_delta_x + delta_x}px, ${arr_j_old_delta_y + delta_y}px, 0px)`;
-            
-            arr_i.setAttribute("data-delta-x", arr_i_old_delta_x - delta_x);
-            arr_i.setAttribute("data-delta-y", arr_i_old_delta_y - delta_y);
-            arr_j.setAttribute("data-delta-x", arr_j_old_delta_x + delta_x);
-            arr_j.setAttribute("data-delta-y", arr_j_old_delta_y + delta_y);
-
-            swap(arr, i, j);
-
-            milliseconds += increase; //TODO: add a proper easing
-            //increase -= 1;
-
-            setTimeout(() => {
-                arr_i.style.transform = arr_i_transform;
-                arr_j.style.transform = arr_j_transform;
-            }, milliseconds);
-        };
-
-        shuffle(page1_els, custom_swap_shuffling);
-        
-        linear(page1_els, (el) => document.getElementById("page1").appendChild(el));
-        
-        quicksort(
-            page1_els,
-            (el1, el2) => {
-                const el1_idx = Number.parseInt(el1.getAttribute("data-idx"));
-                const el2_idx = Number.parseInt(el2.getAttribute("data-idx"));
-
-                return el1_idx < el2_idx ? LESSER_FLAG : HIGHER_FLAG;
-            },
-            custom_swap_sorting,
-            0, 
-            page1_els.length - 1
-        );
-        
-
-        // Create page 2 elements
-        const experiences_arr = [
-            {
-                value: ["Professional Experience"] // FIRST NODE
-            }, 
-            {
-                value: ["2016", "I.T. Technician", "S.i.c.o.t. S.R.L."] 
-            }, 
-            {
-                value: ["2017", "I.T. Technician", "Lugo Town Hall"] 
-            }, 
-            {
-                value: ["2022", "Web Developer", "Il BuonLatte"] 
-            }, 
-            {
-                value: ["2023", "AI / ML Engineer Intern", "SpecialVideo S.R.L."] 
-            },
-            {
-                value: ["Null"] // LAST NODE
-            }
-        ];
-
-        let head = null;
-        let curr_node = null;
-        const create_linked_list = (el) => {
-            const new_node = new DoublyLinkedList(el.value);
-
-            if(!head) {
-                head = new_node;
-                curr_node = head;
-                return;
-            }
-
-            const tmp = curr_node;
-            curr_node._next = new_node;
-            curr_node = new_node;
-            curr_node._prev = tmp;
-        }; // TODO: turn this into a proper factory
-        
-        const create_visual_node = (node) => {
-            let container_el = document.createElement("div");
-            let div_el = document.createElement("div");
-
-            container_el.className = "experiences_node_container";
-            div_el.className = "experiences_node";
-
-            for(const val of node.value()) {
+            let create_el_fun = (el_str, idx) => {
                 let p_el = document.createElement("p");
 
-                p_el.className = "experiences_node_internal_p";
-                p_el.innerText = val;
+                p_el.className = "page1_name_char_p";
 
-                div_el.appendChild(p_el);
-            }
+                p_el.setAttribute("data-idx", idx);
+                p_el.setAttribute("data-delta-x", 0);
+                p_el.setAttribute("data-delta-y", 0);
+                p_el.setAttribute("data-init-pos-x", "-");
+                p_el.setAttribute("data-init-pox-y", "-");
+
+                p_el.innerText = el_str;
+
+                return p_el;
+            }; // TODO: Create factories for turning data into visual elements
+
+            let page1_els = linear(page1_els_arr, create_el_fun);
             
-            //If there's a previous node, append a visual node 
-            //that allows to go to the previous node if interacted with
-            if(node.prev()) {
-                let arr_el = document.createElement("div");
+            //Create page 1 effects
+            const custom_swap_shuffling = (arr, i, j) => {
+                swap(arr, i, j);
+            };
+
+            let milliseconds = 0;
+            let increase = 100;
+            const custom_swap_sorting = (arr, i, j) => {
+                if(i == j) return;
                 
-                arr_el.innerHTML = "&larr;";
-                arr_el.className = "experiences_node_prev_arr";
+                const arr_i = arr[i];
+                const arr_j = arr[j];
 
-                arr_el.addEventListener("click", (event) => {
-                    arr_el.parentElement.previousElementSibling.scrollIntoView({ behavior: "smooth", inline: "center" });
-                }); //TODO: use USS && add arrows appearing and disappearing effects
+                let arr_i_pos, arr_j_pos;
 
-                container_el.appendChild(arr_el);
-            }
+                if(arr_i.getAttribute("data-init-pos-x") == "-") {
+                    arr_i_pos = arr_i.getBoundingClientRect();
+                    arr_i.setAttribute("data-init-pos-x", arr_i_pos.x);
+                    arr_i.setAttribute("data-init-pos-y", arr_i_pos.y);
+                } else {
+                    arr_i_pos = {
+                        x: Number.parseInt(arr_i.getAttribute("data-init-pos-x")),
+                        y: Number.parseInt(arr_i.getAttribute("data-init-pos-y")),
+                    }
+                }
 
-            container_el.appendChild(div_el);
+                if(arr_j.getAttribute("data-init-pos-x") == "-") {
+                    arr_j_pos = arr_j.getBoundingClientRect();
+                    arr_j.setAttribute("data-init-pos-x", arr_j_pos.x);
+                    arr_j.setAttribute("data-init-pos-y", arr_j_pos.y);
+                } else {
+                    arr_j_pos = {
+                        x: Number.parseInt(arr_j.getAttribute("data-init-pos-x")),
+                        y: Number.parseInt(arr_j.getAttribute("data-init-pos-y")),
+                    }
+                }
 
-            //If there's a next 
-            if(node.next()) {
-                let arr_el = document.createElement("div");
-
-                arr_el.innerHTML = "&rarr;";
-                arr_el.className = "experiences_node_next_arr";
+                const arr_i_old_delta_x = Number.parseInt(arr_i.getAttribute("data-delta-x"));
+                const arr_i_old_delta_y = Number.parseInt(arr_i.getAttribute("data-delta-y"));
+                const arr_j_old_delta_x = Number.parseInt(arr_j.getAttribute("data-delta-x"));
+                const arr_j_old_delta_y = Number.parseInt(arr_j.getAttribute("data-delta-y"));
                 
-                arr_el.addEventListener("click", (event) => {
-                    arr_el.parentElement.nextElementSibling.scrollIntoView({ behavior: "smooth", inline: "center" });
-                }); //TODO: use USS && add arrows appearing and disappearing effects
+                const delta_x = Math.round(arr_i_pos.x + arr_i_old_delta_x - arr_j_pos.x - arr_j_old_delta_x);
+                const delta_y = Math.round(arr_i_pos.y + arr_i_old_delta_y - arr_j_pos.y - arr_j_old_delta_y);
 
-                container_el.appendChild(arr_el);
-            }
+                const arr_i_transform = `translate3d(${arr_i_old_delta_x - delta_x}px, ${arr_i_old_delta_y - delta_y}px, 0px)`;
+                const arr_j_transform = `translate3d(${arr_j_old_delta_x + delta_x}px, ${arr_j_old_delta_y + delta_y}px, 0px)`;
+                
+                arr_i.setAttribute("data-delta-x", arr_i_old_delta_x - delta_x);
+                arr_i.setAttribute("data-delta-y", arr_i_old_delta_y - delta_y);
+                arr_j.setAttribute("data-delta-x", arr_j_old_delta_x + delta_x);
+                arr_j.setAttribute("data-delta-y", arr_j_old_delta_y + delta_y);
 
-            return container_el;
-        }; // TODO: turn this into a proper factory
+                swap(arr, i, j);
 
-        let test_arr = new IterableArray(experiences_arr);  
-        test_arr.forEach(create_linked_list);
+                milliseconds += increase; //TODO: add a proper easing
+                //increase -= 1;
+
+                setTimeout(() => {
+                    arr_i.style.transform = arr_i_transform;
+                    arr_j.style.transform = arr_j_transform;
+                }, milliseconds);
+            };
+
+            shuffle(page1_els, custom_swap_shuffling);
+            
+            linear(page1_els, (el) => document.getElementById("page1").appendChild(el));
+            
+            quicksort(
+                page1_els,
+                (el1, el2) => {
+                    const el1_idx = Number.parseInt(el1.getAttribute("data-idx"));
+                    const el2_idx = Number.parseInt(el2.getAttribute("data-idx"));
+
+                    return el1_idx < el2_idx ? LESSER_FLAG : HIGHER_FLAG;
+                },
+                custom_swap_sorting,
+                0, 
+                page1_els.length - 1
+            );
+        }
         
-        head.forEach((el, idx) => document.getElementById("page3").appendChild(create_visual_node(el)));
+        {
+            // Create page 2 elements
+            const experiences_arr = [
+                {
+                    value: ["Professional Experience"] // FIRST NODE
+                }, 
+                {
+                    value: ["2016", "I.T. Technician", "S.i.c.o.t. S.R.L."] 
+                }, 
+                {
+                    value: ["2017", "I.T. Technician", "Lugo Town Hall"] 
+                }, 
+                {
+                    value: ["2022", "Web Developer", "Il BuonLatte"] 
+                }, 
+                {
+                    value: ["2023", "AI / ML Engineer Intern", "SpecialVideo S.R.L."] 
+                },
+                {
+                    value: ["Null"] // LAST NODE
+                }
+            ];
+
+            let head = null;
+            let curr_node = null;
+            const create_linked_list = (el) => {
+                const new_node = new DoublyLinkedList(el.value);
+
+                if(!head) {
+                    head = new_node;
+                    curr_node = head;
+                    return;
+                }
+
+                const tmp = curr_node;
+                curr_node._next = new_node;
+                curr_node = new_node;
+                curr_node._prev = tmp;
+            }; // TODO: turn this into a proper factory
+            
+            const create_visual_node = (node) => {
+                let container_el = document.createElement("div");
+                let div_el = document.createElement("div");
+
+                container_el.className = "experiences_node_container";
+                div_el.className = "experiences_node";
+
+                for(const val of node.value()) {
+                    let p_el = document.createElement("p");
+
+                    p_el.className = "experiences_node_internal_p";
+                    p_el.innerText = val;
+
+                    div_el.appendChild(p_el);
+                }
+                
+                //If there's a previous node, append a visual node 
+                //that allows to go to the previous node if interacted with
+                if(node.prev()) {
+                    let arr_el = document.createElement("div");
+                    
+                    arr_el.innerHTML = "&larr;";
+                    arr_el.className = "experiences_node_prev_arr";
+
+                    arr_el.addEventListener("click", (event) => {
+                        arr_el.parentElement.previousElementSibling.scrollIntoView({ behavior: "smooth", inline: "center" });
+                    }); //TODO: use USS && add arrows appearing and disappearing effects
+
+                    container_el.appendChild(arr_el);
+                }
+
+                container_el.appendChild(div_el);
+
+                //If there's a next 
+                if(node.next()) {
+                    let arr_el = document.createElement("div");
+
+                    arr_el.innerHTML = "&rarr;";
+                    arr_el.className = "experiences_node_next_arr";
+                    
+                    arr_el.addEventListener("click", (event) => {
+                        arr_el.parentElement.nextElementSibling.scrollIntoView({ behavior: "smooth", inline: "center" });
+                    }); //TODO: use USS && add arrows appearing and disappearing effects
+
+                    container_el.appendChild(arr_el);
+                }
+
+                return container_el;
+            }; // TODO: turn this into a proper factory
+
+            let test_arr = new IterableArray(experiences_arr);  
+            test_arr.forEach(create_linked_list);
+            
+            head.forEach((el, idx) => document.getElementById("page2").appendChild(create_visual_node(el)));
+
+        }
+
+        {
+            // Create page 3 elements
+            const projects_arr = [
+                {
+                    value: ["Personal Projects", null] // FIRST NODE
+                }, 
+                {
+                    value: ["2020", "My old website", "https://cristiandavideconte.github.io/myPersonalWebPage/"],
+                }, 
+                {
+                    value: ["2021", "Covid Protection Checker", "https://github.com/CristianDavideConte/SistemiDigitali"],
+                }, 
+                {
+                    value: ["2022", "Universal Smooth Scroll", "https://github.com/CristianDavideConte/universalSmoothScroll"],
+                }, 
+                {
+                    value: ["Null", null] // LAST NODE
+                }
+            ];
+
+            let head = null;
+            let curr_node = null;
+            const create_linked_list = (el) => {
+                const new_node = new DoublyLinkedList(el.value);
+
+                if(!head) {
+                    head = new_node;
+                    curr_node = head;
+                    return;
+                }
+
+                const tmp = curr_node;
+                curr_node._next = new_node;
+                curr_node = new_node;
+                curr_node._prev = tmp;
+            }; // TODO: turn this into a proper factory
+            
+            const create_visual_node = (node) => {
+                let container_el = document.createElement("div");
+                let div_el = document.createElement("div");
+                let i;
+
+                container_el.className = "projects_node_container";
+                div_el.className = "projects_node";
+
+                for(i = 0; i < node.value().length - 1; i++) {
+                    const val = node.value()[i];
+                    let p_el = document.createElement("p");
+
+                    p_el.className = "projects_node_internal_p";
+                    p_el.innerText = val;
+
+                    div_el.appendChild(p_el);
+                }
+                
+                if(node.value()[i] != null) {
+                    //Visit link
+                    let link_el = document.createElement("a");
+
+                    link_el.className = "projects_node_internal_a";
+                    link_el.innerText = "GOTO";
+                    link_el.href = node.value()[i];
+                    link_el.target = "_blank";
+
+                    div_el.appendChild(link_el);
+                }
+                
+                //If there's a previous node, append a visual node 
+                //that allows to go to the previous node if interacted with
+                if(node.prev()) {
+                    let arr_el = document.createElement("div");
+                    
+                    arr_el.innerHTML = "&larr;";
+                    arr_el.className = "projects_node_prev_arr";
+
+                    arr_el.addEventListener("click", (event) => {
+                        arr_el.parentElement.previousElementSibling.scrollIntoView({ behavior: "smooth", inline: "center" });
+                    }); //TODO: use USS && add arrows appearing and disappearing effects
+
+                    container_el.appendChild(arr_el);
+                }
+
+                container_el.appendChild(div_el);
+
+                //If there's a next 
+                if(node.next()) {
+                    let arr_el = document.createElement("div");
+
+                    arr_el.innerHTML = "&rarr;";
+                    arr_el.className = "projects_node_next_arr";
+                    
+                    arr_el.addEventListener("click", (event) => {
+                        arr_el.parentElement.nextElementSibling.scrollIntoView({ behavior: "smooth", inline: "center" });
+                    }); //TODO: use USS && add arrows appearing and disappearing effects
+
+                    container_el.appendChild(arr_el);
+                }
+
+                return container_el;
+            }; // TODO: turn this into a proper factory
+
+            let test_arr = new IterableArray(projects_arr);  
+            test_arr.forEach(create_linked_list);
+            
+            head.forEach((el, idx) => document.getElementById("page3").appendChild(create_visual_node(el)));
+        }
+
+
+        {   
+            //Page 4 elements
+            const adj_list = [[1,2],[2,3],[3,4],[4,1], [5,1]]; 
+            const strategy = new DFSStrategy();
+            const graph = new Graph(adj_list, strategy); 
+
+            graph.forEach((el, idx) => console.log(el));
+        }
     });
 </script>
