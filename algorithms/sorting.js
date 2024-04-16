@@ -1,3 +1,5 @@
+//TODO refactor this and use a strategy pattern for different sorting algorithms
+
 export const LESSER_FLAG = -1;
 export const EQUAL_FLAG = 0;
 export const HIGHER_FLAG = 1;

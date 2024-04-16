@@ -4,6 +4,7 @@ import {
 
 export class Graph extends Iterable {
     #starting_node;
+    #nodes;
     #graph;
     #exploration_strategy;
 
@@ -11,6 +12,7 @@ export class Graph extends Iterable {
         super();
         
         this.#starting_node = adj_list[0][0];
+        this.#nodes = new Set();
         this.#graph = new Map();
         this.#exploration_strategy = exploration_strategy;
 
@@ -25,7 +27,14 @@ export class Graph extends Iterable {
 
             this.#graph.get(adj[0]).push(adj[1]);
             this.#graph.get(adj[1]).push(adj[0]);   
+
+            this.#nodes.add(adj[0]);
+            this.#nodes.add(adj[1]);
         }
+    }
+
+    neighborsOf(node) {
+        return this.#graph.get(node);
     }
 
     graph() {
@@ -34,6 +43,10 @@ export class Graph extends Iterable {
 
     startingNode() {
         return this.#starting_node;
+    }
+
+    nodes() {
+        return this.#nodes;
     }
 
     get iterator() {

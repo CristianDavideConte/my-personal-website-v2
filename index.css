@@ -44,3 +44,10 @@
     margin: 0px 20px;
     cursor: pointer;
 }
+
+.programming_languages_node {
+    width: 100px;
+    height: 100px;
+    background-color: brown;
+    border-radius: 100%;
+}

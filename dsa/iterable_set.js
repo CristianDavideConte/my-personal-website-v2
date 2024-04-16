@@ -2,17 +2,17 @@ import {
     Iterable
 } from "./iterable.js";
 
-export class IterableArray extends Iterable {
-    #arr;
+export class IterableSet extends Iterable {
+    #set;
 
-    constructor(arr) {
+    constructor(set) {
         super();
-        
-        this.#arr = arr;
+
+        this.#set = set;
     }
 
     get iterator() {
-        const iterator = this.#arr[Symbol.iterator]();
+        const iterator = this.#set[Symbol.iterator]();
 
         return {
             next: () => {

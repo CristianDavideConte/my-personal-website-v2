@@ -6,6 +6,7 @@
         <title>Cristian D. Conte</title>
     
         <script async type="module" src="./dsa/iterable_array.js"></script>
+        <script async type="module" src="./dsa/iterable_set.js"></script>
         <script async type="module" src="./dsa/doubly_linked_list.js"></script>
         <script async type="module" src="./dsa/graph.js"></script>
 
@@ -13,6 +14,7 @@
         <script async type="module" src="./algorithms/sorting.js"></script>
         <script async type="module" src="./algorithms/graph_exploration/dfs.js"></script>
         <script async type="module" src="./algorithms/graph_exploration/bfs.js"></script>
+        <script async type="module" src="./algorithms/graph_visualization/spring_embedder.js"></script>
         
 		<!-- Preload resources -->
 		<link rel = "preload" href = "./index.css" as = "style"/>
@@ -33,6 +35,10 @@
     import {
         IterableArray,
     } from "./dsa/iterable_array.js";
+    
+    import {
+        IterableSet,
+    } from "./dsa/iterable_set.js";
 
     import {
         DoublyLinkedList,
@@ -53,6 +59,10 @@
     import {
         BFSStrategy
     } from "./algorithms/graph_exploration/bfs.js";
+
+    import {
+        SpringEmbedderStrategy
+    } from "./algorithms/graph_visualization/spring_embedder.js";
 
     import {
         swap,
@@ -376,7 +386,6 @@
 
 
         {   
-
             //Page 4 elements
             const adj_list = [[1,2],[2,3],[3,4],[4,1], [5,1]]; 
             //const strategy = new DFSStrategy();
@@ -384,7 +393,26 @@
 
             const graph = new Graph(adj_list, strategy); 
 
-            graph.forEach((el, idx) => console.log(el));
+            const visualization_strategy = new SpringEmbedderStrategy();
+
+            const nodes_pos = visualization_strategy.placeNodes(graph, 0, 0, window.innerWidth, window.innerHeight);
+
+            console.log(nodes_pos);
+
+            const nodes = new IterableSet(graph.nodes());
+
+            const create_visual_node = (node) => {
+                const div_el = document.createElement("div");
+                const node_pos = nodes_pos.get(node);
+                
+                div_el.className = "programming_languages_node";
+                div_el.style.transform = `translate3d(${node_pos[0]}px, ${node_pos[1]}px, 0px)`;
+                div_el.innerHTML = node;
+
+                return div_el;
+            };
+
+            nodes.forEach((el, idx) => document.getElementById("page4").appendChild(create_visual_node(el)));
         }
     });
 </script>
