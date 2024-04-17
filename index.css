@@ -46,6 +46,10 @@
 }
 
 .programming_languages_node {
+    position: absolute;
+    display: grid;
+    justify-content: center;
+    align-items: center;
     width: 100px;
     height: 100px;
     background-color: brown;
