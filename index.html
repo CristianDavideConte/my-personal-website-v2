@@ -387,19 +387,55 @@
 
         {   
             //Page 4 elements
-            const adj_list = [[1,2],[2,3],[3,4],[4,1], [5,1]]; 
+            const adj_list = [
+                ["Git", "C"],                
+                ["Git", "C++"],                
+                ["C", "C++"],                
+                ["C", "Rust"],                
+                ["C", "Java"],                
+                ["C++", "Rust"],                
+                //["C++", "OpenGL"],                
+                //["Rust", "OpenGL"],  //TODO: remove              
+                ["Rust", "Java"],                
+                //["Java", "SQL"],                
+                //["Java", "Android"],                
+                //["Java", "Javascript"],                
+                //["Javascript", "React"],                
+                //["Javascript", "CSS"],                
+                //["Javascript", "HTML"],                
+                //["Javascript", "Dart"],                
+                //["Javascript", "Python"],                
+                //["Dart", "Flutter"],                
+                //["Python", "Numpy"],                
+                //["Python", "Tensorflow"],                
+                //["Python", "Pytorch"],                
+                //["Tensorflow", "Pytorch"],                
+                //["Tensorflow", "V.I.T."],                
+                //["Pytorch", "V.I.T."],                
+            ];
+            
+
+            let nodes_size = 100;
+
             //const strategy = new DFSStrategy();
-            const strategy = new BFSStrategy();
+            const strategy = new BFSStrategy();  
 
             const graph = new Graph(adj_list, strategy); 
 
             const visualization_strategy = new SpringEmbedderStrategy();
 
-            const nodes_pos = visualization_strategy.placeNodes(graph, 0, 0, 500, 500);
+            let nodes_pos = visualization_strategy.getRandomNodesPositions(
+                graph, 
+                0, 
+                0, 
+                window.innerWidth - nodes_size, 
+                window.innerHeight - nodes_size, 
+            );
 
-            console.log(nodes_pos);
+            //console.log(nodes_pos);
 
             const nodes = new IterableSet(graph.nodes());
+            const nodes_mapping = new Map();
 
             const create_visual_node = (node) => {
                 const div_el = document.createElement("div");
@@ -409,10 +445,40 @@
                 div_el.style.transform = `translate3d(${node_pos[0]}px, ${node_pos[1]}px, 0px)`;
                 div_el.innerHTML = node;
 
+                nodes_mapping.set(node, div_el);
+
                 return div_el;
             };
 
             nodes.forEach((el, idx) => document.getElementById("page4").appendChild(create_visual_node(el)));
+
+            let num_iter = 0;
+            let max_num_iter = 5000;
+            let milliseconds = 10;
+
+            setTimeout(() => {
+                while(num_iter < max_num_iter){
+                    setTimeout(() => {
+                        console.log("iter");
+
+                        nodes_pos = visualization_strategy.updatePlacement(
+                            graph, 
+                            0, 
+                            0, 
+                            window.innerWidth - nodes_size, 
+                            window.innerHeight - nodes_size, 
+                            nodes_pos 
+                        );
+                        
+                        nodes.forEach((el, idx) => {
+                            const node_pos = nodes_pos.get(el);
+                            nodes_mapping.get(el).style.transform = `translate3d(${node_pos[0]}px, ${node_pos[1]}px, 0px)`;
+                        });
+                    }, milliseconds * num_iter); // 
+
+                    num_iter++;
+                }
+            }, 0);
         }
     });
 </script>

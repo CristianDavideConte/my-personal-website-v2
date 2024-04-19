@@ -1,3 +1,3 @@
 export class GraphVisualizationStrategy {
-    placeNodes(graph) { return null; };
+    updatePlacement(graph) { return null; };
 }

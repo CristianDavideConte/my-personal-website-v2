@@ -1,3 +1,7 @@
+body {
+    margin: 0;
+}
+
 #page1 {
     display: grid;
     grid-template-columns: repeat(17, 1fr);
@@ -54,4 +58,16 @@
     height: 100px;
     background-color: brown;
     border-radius: 100%;
+ 	transition: transform 1s linear; /* TODO, change easing to elastic */
+}
+
+
+#page4 {
+    padding-bottom: 100vh;
+}
+
+#page1, 
+#page2, 
+#page3 {
+    display:none;
 }
