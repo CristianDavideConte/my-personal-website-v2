@@ -8,7 +8,7 @@ export class Graph extends Iterable {
     #graph;
     #exploration_strategy;
 
-    constructor(adj_list = [[]], exploration_strategy) {
+    constructor(adj_list = [[]], isDirectedGraph = false, exploration_strategy) {
         super();
         
         this.#starting_node = adj_list[0][0];
@@ -26,11 +26,18 @@ export class Graph extends Iterable {
             }
 
             this.#graph.get(adj[0]).push(adj[1]);
-            this.#graph.get(adj[1]).push(adj[0]);   
-
+            if (!isDirectedGraph) {
+                this.#graph.get(adj[1]).push(adj[0]);
+            }
+            
             this.#nodes.add(adj[0]);
             this.#nodes.add(adj[1]);
         }
+    }
+
+    degreeOf(node) {
+        const nbs = this.#graph.get(node);
+        return nbs ? nbs.length : 0;
     }
 
     neighborsOf(node) {

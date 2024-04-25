@@ -1,8 +1,4 @@
 import {
-    shuffle
-} from "../../algorithms/sorting.js";
-
-import {
     IterableSet
 } from "../../dsa/iterable_set.js";
 
@@ -14,33 +10,41 @@ import {
 export class SpringEmbedderStrategy extends GraphVisualizationStrategy {
     #delta;
     #node_radius;
+    #min_x;
+    #min_y;
+    #max_x;
+    #max_y;
 
-    constructor() {
+    constructor(min_x, min_y, max_x, max_y) {
         super();
 
         this.#delta = 1;
         this.#node_radius = 50; //TODO, make this an input parameter
+        this.#min_x = min_x;
+        this.#max_x = max_x;
+        this.#min_y = min_y;
+        this.#max_y = max_y;
     }
 
-    getRandomNodesPositions(graph, min_x, min_y, max_x, max_y) {
+    getInitialNodePositions(graph) {
         const nodes_list = new IterableSet(graph.nodes());
         const nodes_pos = new Map();
 
         nodes_list.forEach((node, idx) => {
             nodes_pos.set(node, [
-                Math.random() * ((max_x - min_x) + min_x),
-                Math.random() * ((max_y - min_y) + min_y) 
-                //(max_x + min_y) / 2, //
-                //(max_x + min_y) / 2, //
+                Math.random() * ((this.#max_x - this.#min_x) + this.#min_x),
+                Math.random() * ((this.#max_y - this.#min_y) + this.#min_y)
+                //(this.#max_x + this.#min_y) / 2,
+                //(this.#max_x + this.#min_y) / 2,
             ]);
         });
 
         return nodes_pos;
     }
 
-    updatePlacement(graph, min_x, min_y, max_x, max_y, initial_poses) {
+    updatePlacement(graph, initial_poses) {
         let nodes_list = Array.from(graph.nodes());
-        shuffle(nodes_list);
+
         //const nodes_list = new IterableSet();
 
         const nodes_pos = initial_poses;
@@ -61,6 +65,16 @@ export class SpringEmbedderStrategy extends GraphVisualizationStrategy {
                 other_nodes.push(other_node);
             });
 
+            // Calculate the attractive forces of the current node
+            node_nbs.forEach((nb, idx) => {
+                const forces = this.#attractiveForce(nodes_pos, nb, node);
+                node_forces[0] = node_forces[1] + forces[0];
+                node_forces[1] = node_forces[1] + forces[1];
+            });
+
+            //node_pos[0] = Math.min(this.#max_x, Math.max(this.#min_x, node_pos[0] + this.#delta * node_forces[0]));
+            //node_pos[1] = Math.min(this.#max_y, Math.max(this.#min_y, node_pos[1] + this.#delta * node_forces[1]));
+
             // Calculate repulsive forces of the current node
             other_nodes.forEach((other_node, idx) => {
                 const forces = this.#repulsiveForce(nodes_pos, node, other_node);
@@ -68,27 +82,10 @@ export class SpringEmbedderStrategy extends GraphVisualizationStrategy {
                 node_forces[1] = node_forces[1] + forces[1];
             });
 
-            // Calculate the attractive forces of the current node
-            node_nbs.forEach((nb, idx) => {
-                const forces = this.#attractiveForce(nodes_pos, nb, node);
-                node_forces[0] = node_forces[1] + forces[0];
-                node_forces[1] = node_forces[1] + forces[1];
-            });
-            
-            node_pos[0] = Math.min(max_x, Math.max(min_x, node_pos[0] + this.#delta * node_forces[0]));
-            node_pos[1] = Math.min(max_y, Math.max(min_y, node_pos[1] + this.#delta * node_forces[1]));
+            node_pos[0] = Math.min(this.#max_x, Math.max(this.#min_x, node_pos[0] + this.#delta * node_forces[0]));
+            node_pos[1] = Math.min(this.#max_y, Math.max(this.#min_y, node_pos[1] + this.#delta * node_forces[1]));
 
             nodes_forces.set(node, node_forces);
-            nodes_pos.set(node, node_pos);
-        });
-
-        nodes_list.forEach((node, idx) => {
-            let node_pos = nodes_pos.get(node);
-            let node_forces = nodes_forces.get(node);
-
-            //node_pos[0] = Math.min(max_x, Math.max(min_x, node_pos[0] + this.#delta * node_forces[0]));
-            //node_pos[1] = Math.min(max_y, Math.max(min_y, node_pos[1] + this.#delta * node_forces[1]));
-
             nodes_pos.set(node, node_pos);
         });
 
@@ -98,7 +95,8 @@ export class SpringEmbedderStrategy extends GraphVisualizationStrategy {
     #repulsiveForce(nodes_pos, node_1, node_2) {
         //return [0, 0];
 
-        const c_rep = 2e3; //TODO, play with this number (repulsive constant)
+        const c_spring = 5e-2; //TODO, play with this number (spring constant)
+        const c_rep = 1e-1; //TODO, play with this number (repulsive constant)
 
         let [delta_x, delta_y] = this.#distanceL1(nodes_pos, node_1, node_2);
         
@@ -109,19 +107,25 @@ export class SpringEmbedderStrategy extends GraphVisualizationStrategy {
 
         const distance_2 = delta_x * delta_x + delta_y * delta_y;
         const distance = Math.sqrt(distance_2);
-        const force = c_rep / distance_2;
-
+        const force = c_spring / distance;
+        //const force = this.#node_radius * Math.exp(-c_rep * distance); //2*
+        
         return [
-            (delta_x / distance) * force,
-            (delta_y / distance) * force
+            delta_x * force,
+            delta_y * force
         ];
+
+        //return [
+        //    (delta_x / distance) * force,
+        //    (delta_y / distance) * force
+        //];
     }
 
     #attractiveForce(nodes_pos, node_1, node_2) {
         //return [0, 0]
 
-        const c_spring = 1e-1; //TODO, play with this number (spring constant)
-        const l_spring = 2.5 * this.#node_radius; //TODO, play with this number (spring length)
+        const c_spring = 1e3; //TODO, play with this number (spring constant)
+        const l_spring = 1//this.#node_radius; //TODO, play with this number (spring length)
 
         let [delta_x, delta_y] = this.#distanceL1(nodes_pos, node_1, node_2);
         
@@ -130,8 +134,12 @@ export class SpringEmbedderStrategy extends GraphVisualizationStrategy {
             delta_y = Math.random() * 2 - 1; //between -1 and 1
         }
 
-        const distance = Math.sqrt(delta_x * delta_x + delta_y * delta_y);
-        const force = Math.abs(distance * c_spring / l_spring);
+        const distance_2 = delta_x * delta_x + delta_y * delta_y;
+        const distance = Math.sqrt(distance_2);
+        const force = distance_2 / c_spring;
+
+        //const force = l_spring * Math.exp(c_spring * distance); //2*
+        //const force = c_spring * Math.log10(distance / l_spring);
         
         return [
             (delta_x / distance) * force,
