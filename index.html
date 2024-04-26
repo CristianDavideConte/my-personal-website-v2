@@ -14,7 +14,8 @@
         <script async type="module" src="./algorithms/sorting.js"></script>
         <script async type="module" src="./algorithms/graph_exploration/dfs.js"></script>
         <script async type="module" src="./algorithms/graph_exploration/bfs.js"></script>
-        <script async type="module" src="./algorithms/graph_visualization/spring_embedder.js"></script>
+        <script async type="module" src="./algorithms/graph_visualization/spring_embedder_eades.js"></script>
+        <script async type="module" src="./algorithms/graph_visualization/spring_embedder_fruchterman.js"></script>
         
 		<!-- Preload resources -->
 		<link rel = "preload" href = "./index.css" as = "style"/>
@@ -61,13 +62,12 @@
     } from "./algorithms/graph_exploration/bfs.js";
 
     import {
-        SpringEmbedderStrategy
-    } from "./algorithms/graph_visualization/spring_embedder.js";
-
+        SpringEmbedderEadesStrategy
+    } from "./algorithms/graph_visualization/spring_embedder_eades.js";
+    
     import {
-        TestEmbedderStrategy
-    } from "./algorithms/graph_visualization/test_embedder.js";
-
+        SpringEmbedderFruchtermanStrategy
+    } from "./algorithms/graph_visualization/spring_embedder_fruchterman.js";
 
     import {
         swap,
@@ -400,23 +400,23 @@
                 ["C", "Java"],                
                 ["C++", "Rust"],                
                 ["C++", "OpenGL"],                
-                //["Rust", "OpenGL"],  //TODO: remove              
-                ["Rust", "Java"],                
-                //["Java", "SQL"],                
-                //["Java", "Android"],                
-                //["Java", "Javascript"],                
-                //["Javascript", "React"],                
-                //["Javascript", "CSS"],                
-                //["Javascript", "HTML"],                
-                //["Javascript", "Dart"],                
-                //["Javascript", "Python"],                
-                //["Dart", "Flutter"],                
-                //["Python", "Numpy"],                
-                //["Python", "Tensorflow"],                
-                //["Python", "Pytorch"],                
-                //["Tensorflow", "Pytorch"],                
-                //["Tensorflow", "V.I.T."],                
-                //["Pytorch", "V.I.T."],                
+                ["Rust", "OpenGL"],  //TODO: remove              
+                ["Rust", "Java"],                 
+                ["Java", "SQL"],                
+                ["Java", "Android"],                
+                ["Java", "Javascript"],                
+                ["Javascript", "React"],                
+                ["Javascript", "CSS"],                
+                ["Javascript", "HTML"],                
+                ["Javascript", "Dart"],                
+                ["Javascript", "Python"],                
+                ["Dart", "Flutter"],                
+                ["Python", "Numpy"],                
+                ["Python", "Tensorflow"],                
+                ["Python", "Pytorch"],                
+                ["Tensorflow", "Pytorch"],                
+                ["Tensorflow", "V.I.T."],                
+                ["Pytorch", "V.I.T."],                
             ];
             
             let nodes_size = 100;
@@ -427,12 +427,10 @@
             const isDirectedGraph = false;
             const graph = new Graph(adj_list, isDirectedGraph, strategy); 
 
-            const visualization_strategy = new SpringEmbedderStrategy(0, 0, window.innerWidth - nodes_size, window.innerHeight - nodes_size);
-            //const visualization_strategy = new TestEmbedderStrategy(0, 0, window.innerWidth - nodes_size, window.innerHeight - nodes_size);
+            const visualization_strategy = new SpringEmbedderEadesStrategy(0, 0, window.innerWidth - nodes_size, window.innerHeight - nodes_size);
+            //const visualization_strategy = new SpringEmbedderFruchtermanStrategy(0, 0, window.innerWidth - nodes_size, window.innerHeight - nodes_size);
 
             let nodes_pos = visualization_strategy.getInitialNodePositions(graph);
-
-            //console.log(nodes_pos);
 
             const nodes = new IterableSet(graph.nodes());
             const nodes_mapping = new Map();
@@ -453,21 +451,23 @@
             nodes.forEach((el, idx) => document.getElementById("page4").appendChild(create_visual_node(el)));
 
             let num_iter = 0;
-            let max_num_iter = 5000;
+            let max_num_iter = 10000;
             let milliseconds = 10;
 
             setTimeout(() => {
                 while(num_iter < max_num_iter){
                     setTimeout(() => {
-                        console.log("iter");
-
                         nodes_pos = visualization_strategy.updatePlacement(graph, nodes_pos);
                         
                         nodes.forEach((el, idx) => {
                             const node_pos = nodes_pos.get(el);
                             nodes_mapping.get(el).style.transform = `translate3d(${node_pos[0]}px, ${node_pos[1]}px, 0px)`;
                         });
-                    }, milliseconds * num_iter); // 
+
+                        document.getElementById("page4").className = Number.parseInt(
+                            document.getElementById("page4").className || "0"
+                        ) + 1; // TODO: debug, remove
+                    }, milliseconds * num_iter);
 
                     num_iter++;
                 }
