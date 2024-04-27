@@ -427,8 +427,8 @@
             const isDirectedGraph = false;
             const graph = new Graph(adj_list, isDirectedGraph, strategy); 
 
-            const visualization_strategy = new SpringEmbedderEadesStrategy(0, 0, window.innerWidth - nodes_size, window.innerHeight - nodes_size);
-            //const visualization_strategy = new SpringEmbedderFruchtermanStrategy(0, 0, window.innerWidth - nodes_size, window.innerHeight - nodes_size);
+            //const visualization_strategy = new SpringEmbedderEadesStrategy(0, 0, window.innerWidth - nodes_size, window.innerHeight - nodes_size);
+            const visualization_strategy = new SpringEmbedderFruchtermanStrategy(0, 0, window.innerWidth - nodes_size, window.innerHeight - nodes_size);
 
             let nodes_pos = visualization_strategy.getInitialNodePositions(graph);
 
@@ -456,7 +456,7 @@
 
             setTimeout(() => {
                 while(num_iter < max_num_iter){
-                    setTimeout(() => {
+                    //setTimeout(() => {
                         nodes_pos = visualization_strategy.updatePlacement(graph, nodes_pos);
                         
                         nodes.forEach((el, idx) => {
@@ -467,7 +467,7 @@
                         document.getElementById("page4").className = Number.parseInt(
                             document.getElementById("page4").className || "0"
                         ) + 1; // TODO: debug, remove
-                    }, milliseconds * num_iter);
+                    //}, milliseconds * num_iter);
 
                     num_iter++;
                 }

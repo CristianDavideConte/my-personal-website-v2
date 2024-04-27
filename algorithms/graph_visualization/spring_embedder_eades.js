@@ -30,8 +30,8 @@ export class SpringEmbedderEadesStrategy extends GraphVisualizationStrategy {
 
         this.#node_radius = 50; //TODO, make this an input parameter
         this.#delta = 1;
-        this.#c_rep = 1e2; 
-        this.#c_spring = 1e0;
+        this.#c_rep = 2e3; 
+        this.#c_spring = 1e1;
         this.#l_spring = 1e2;
         this.#temp_cooldown_factor = 1//0.999;
     }
@@ -40,12 +40,12 @@ export class SpringEmbedderEadesStrategy extends GraphVisualizationStrategy {
         const nodes_list = new IterableSet(graph.nodes());
         const nodes_pos = new Map();
         
-        let prev_x = Math.random() * ((this.#max_x - this.#min_x) + this.#min_x);
-        let prev_y = Math.random() * ((this.#max_y - this.#min_y) + this.#min_y);
+        let prev_x = Math.random() * (this.#max_x - this.#min_x) + this.#min_x;
+        let prev_y = Math.random() * (this.#max_y - this.#min_y) + this.#min_y;
 
         nodes_list.forEach((node, idx) => {
-            const new_x = prev_x + (Math.random() * 2 - 1) * 100;
-            const new_y = prev_y + (Math.random() * 2 - 1) * 100;
+            const new_x = Math.min(this.#max_x, Math.max(this.#min_x, prev_x + (Math.random() * 2 - 1) * 2 * this.#node_radius));
+            const new_y = Math.min(this.#max_y, Math.max(this.#min_y, prev_y + (Math.random() * 2 - 1) * 2 * this.#node_radius));
 
             prev_x = new_x;
             prev_y = new_y;
@@ -144,11 +144,11 @@ export class SpringEmbedderEadesStrategy extends GraphVisualizationStrategy {
 
         //return [pos_1[0] - pos_2[0], pos_1[1] - pos_2[1]];
 
-        const [node_1_left, node_1_right] = [pos_1[0] - this.#node_radius, pos_1[0] + this.#node_radius];
-        const [node_2_left, node_2_right] = [pos_2[0] - this.#node_radius, pos_2[0] + this.#node_radius];
+        const [node_1_left, node_1_right] = [pos_1[0], pos_1[0] + 2 * this.#node_radius];
+        const [node_2_left, node_2_right] = [pos_2[0], pos_2[0] + 2 * this.#node_radius];
 
-        const [node_1_top, node_1_bottom] = [pos_1[1] - this.#node_radius, pos_1[1] + this.#node_radius];
-        const [node_2_top, node_2_bottom] = [pos_2[1] - this.#node_radius, pos_2[1] + this.#node_radius];
+        const [node_1_top, node_1_bottom] = [pos_1[1], pos_1[1] + 2 * this.#node_radius];
+        const [node_2_top, node_2_bottom] = [pos_2[1], pos_2[1] + 2 * this.#node_radius];
 
         const delta_x = Math.min(
             Math.abs(node_1_left - node_2_left),
