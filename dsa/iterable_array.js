@@ -10,6 +10,10 @@ export class IterableArray extends Iterable {
         
         this.#arr = arr;
     }
+    
+    size() {
+        return this.#arr.length;
+    }
 
     get iterator() {
         const iterator = this.#arr[Symbol.iterator]();

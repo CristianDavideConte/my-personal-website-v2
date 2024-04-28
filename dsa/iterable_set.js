@@ -11,6 +11,10 @@ export class IterableSet extends Iterable {
         this.#set = set;
     }
 
+    size() {
+        return this.#set.size;
+    }
+
     get iterator() {
         const iterator = this.#set[Symbol.iterator]();
 
