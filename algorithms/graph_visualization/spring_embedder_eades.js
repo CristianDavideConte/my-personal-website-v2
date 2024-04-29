@@ -23,12 +23,13 @@ export class SpringEmbedderEadesStrategy extends GraphVisualizationStrategy {
     constructor(min_x, min_y, max_x, max_y) {
         super();
 
-        this.#min_x = min_x;
-        this.#max_x = max_x;
-        this.#min_y = min_y;
-        this.#max_y = max_y;
-
         this.#node_radius = 50; //TODO, make this an input parameter
+
+        this.#min_x = min_x;
+        this.#min_y = min_y;
+        this.#max_x = max_x - (2 * this.#node_radius);
+        this.#max_y = max_y - (2 * this.#node_radius);
+
         this.#delta = 1;
         this.#c_rep = 1e0; 
         this.#c_spring = 1e1;

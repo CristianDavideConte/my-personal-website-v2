@@ -424,7 +424,10 @@
                 ["Pytorch", "V.I.T."],                
             ];
             
-            let nodes_size = 100;
+            const min_x = 0;
+            const min_y = 0;
+            const max_x = window.innerWidth;
+            const max_y = window.innerHeight;
 
             //const strategy = new DFSStrategy();
             const strategy = new BFSStrategy();  
@@ -432,9 +435,9 @@
             const isDirectedGraph = false;
             const graph = new Graph(adj_list, isDirectedGraph, strategy); 
 
-            //const visualization_strategy = new SpringEmbedderEadesStrategy(0, 0, window.innerWidth - nodes_size, window.innerHeight - nodes_size);
-            //const visualization_strategy = new SpringEmbedderFruchtermanStrategy(0, 0, window.innerWidth - nodes_size, window.innerHeight - nodes_size);
-            const visualization_strategy = new ForceDirectedGravityStrategy(0, 0, window.innerWidth - nodes_size, window.innerHeight - nodes_size);
+            //const visualization_strategy = new SpringEmbedderEadesStrategy(min_x, min_y, max_x, max_y);
+            //const visualization_strategy = new SpringEmbedderFruchtermanStrategy(min_x, min_y, max_x, max_y);
+            const visualization_strategy = new ForceDirectedGravityStrategy(min_x, min_y, max_x, max_y);
 
             let nodes_pos = visualization_strategy.getInitialNodePositions(graph);
 
@@ -457,7 +460,7 @@
             nodes.forEach((el, idx) => document.getElementById("page4").appendChild(create_visual_node(el)));
 
             let num_iter = 0;
-            let max_num_iter = 10000;
+            let max_num_iter = 1000;
             let milliseconds = 10;
 
             setTimeout(() => {

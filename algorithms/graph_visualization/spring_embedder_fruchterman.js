@@ -21,12 +21,13 @@ export class SpringEmbedderFruchtermanStrategy extends GraphVisualizationStrateg
     constructor(min_x, min_y, max_x, max_y) {
         super();
 
-        this.#min_x = min_x;
-        this.#max_x = max_x;
-        this.#min_y = min_y;
-        this.#max_y = max_y;
-
         this.#node_radius = 50; //TODO, make this an input parameter
+
+        this.#min_x = min_x;
+        this.#min_y = min_y;
+        this.#max_x = max_x - (2 * this.#node_radius);
+        this.#max_y = max_y - (2 * this.#node_radius);
+
         this.#delta = 1;
         this.#l_spring = 1e2;
         this.#temp_cooldown_factor = 0.99;
