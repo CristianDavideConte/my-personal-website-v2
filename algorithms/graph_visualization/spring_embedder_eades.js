@@ -84,15 +84,15 @@ export class SpringEmbedderEadesStrategy extends GraphVisualizationStrategy {
             // Calculate the attractive forces of the current node
             node_nbs.forEach((nb, idx) => {
                 const forces = this.#attractiveForce(nodes_pos, nb, node);
-                node_forces[0] = node_forces[1] + forces[0];
-                node_forces[1] = node_forces[1] + forces[1];
+                node_forces[0] += forces[0];
+                node_forces[1] += forces[1];
             });
 
             // Calculate repulsive forces of the current node
             other_nodes.forEach((other_node, idx) => {
                 const forces = this.#repulsiveForce(nodes_pos, node, other_node);
-                node_forces[0] = node_forces[1] + forces[0];
-                node_forces[1] = node_forces[1] + forces[1];
+                node_forces[0] += forces[0];
+                node_forces[1] += forces[1];
             });
 
             node_pos[0] = Math.min(this.#max_x, Math.max(this.#min_x, node_pos[0] + this.#delta * node_forces[0]));
@@ -109,36 +109,26 @@ export class SpringEmbedderEadesStrategy extends GraphVisualizationStrategy {
     #repulsiveForce(nodes_pos, node_1, node_2) {
         let [delta_x, delta_y] = this.#distanceL1(nodes_pos, node_1, node_2);
         
-        if (delta_x == 0 && delta_y == 0) {
-            delta_x = Math.random() * 2 - 1; //between -1 and 1
-            delta_y = Math.random() * 2 - 1; //between -1 and 1
-        }
-
         const distance_2 = delta_x * delta_x + delta_y * delta_y;
         const distance = Math.sqrt(distance_2);
         const force = this.#c_rep / distance_2;
 
         return [
-            (delta_x / distance) * force,
-            (delta_y / distance) * force
+            delta_x / distance * force,
+            delta_y / distance * force
         ];
     }
 
     #attractiveForce(nodes_pos, node_1, node_2) {
         let [delta_x, delta_y] = this.#distanceL1(nodes_pos, node_1, node_2);
         
-        if (delta_x == 0 && delta_y == 0) {
-            delta_x = Math.random() * 2 - 1; //between -1 and 1
-            delta_y = Math.random() * 2 - 1; //between -1 and 1
-        }
-
         const distance_2 = delta_x * delta_x + delta_y * delta_y;
         const distance = Math.sqrt(distance_2);
         const force = this.#c_spring * Math.log(distance / this.#l_spring);
         
         return [
-            (delta_x / distance) * force,
-            (delta_y / distance) * force,
+            delta_x / distance * force,
+            delta_y / distance * force
         ];
     }
 
@@ -146,31 +136,18 @@ export class SpringEmbedderEadesStrategy extends GraphVisualizationStrategy {
         const pos_1 = nodes_pos.get(node_1);
         const pos_2 = nodes_pos.get(node_2);
 
-        //return [pos_1[0] - pos_2[0], pos_1[1] - pos_2[1]];
+        const delta_x = pos_1[0] - pos_2[0];
+        const delta_y = pos_1[1] - pos_2[1];
 
-        const [node_1_left, node_1_right] = [pos_1[0], pos_1[0] + 2 * this.#node_radius];
-        const [node_2_left, node_2_right] = [pos_2[0], pos_2[0] + 2 * this.#node_radius];
+        // Avoid having the same space position, because it would be physically impossible
+        if (delta_x == 0 && delta_y == 0) {
+            pos_2[0] += Math.random() * 2 - 1; //between -1 and 1
+            pos_2[1] += Math.random() * 2 - 1; //between -1 and 1
+        }
 
-        const [node_1_top, node_1_bottom] = [pos_1[1], pos_1[1] + 2 * this.#node_radius];
-        const [node_2_top, node_2_bottom] = [pos_2[1], pos_2[1] + 2 * this.#node_radius];
-
-        const delta_x = Math.min(
-            Math.abs(node_1_left - node_2_left),
-            Math.abs(node_1_left - node_2_right),
-            Math.abs(node_1_right - node_2_left),
-            Math.abs(node_1_right - node_2_right) 
-        );
-
-        const delta_y = Math.min(
-            Math.abs(node_1_top - node_2_top),
-            Math.abs(node_1_top - node_2_bottom),
-            Math.abs(node_1_bottom - node_2_top),
-            Math.abs(node_1_bottom - node_2_bottom)
-        );
-
-        const sign_x = Math.sign(node_1_left - node_2_left);
-        const sign_y = Math.sign(node_1_top - node_2_top);
-
-        return [sign_x * delta_x, sign_y * delta_y];
+        return [
+            pos_1[0] - pos_2[0],
+            pos_1[1] - pos_2[1],
+        ];
     }
 }
