@@ -54,8 +54,8 @@ body {
     display: grid;
     justify-content: center;
     align-items: center;
-    width: 100px;
-    height: 100px;
+    width: 30px;
+    height: 30px;
     background-color: brown;
     border-radius: 100%;
  	transition: transform 1s linear; /* TODO, change easing to elastic */
@@ -69,5 +69,5 @@ body {
 #page1, 
 #page2, 
 #page3 {
-    display:none;
+    //display:none;
 }

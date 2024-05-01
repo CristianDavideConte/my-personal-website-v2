@@ -23,9 +23,9 @@ export class ForceDirectedGravityStrategy extends GraphVisualizationStrategy {
     constructor(min_x, min_y, max_x, max_y) {
         super();
 
-        this.#node_radius = 50; //TODO, make this an input parameter
+        this.#node_radius = 15; //TODO, make this an input parameter
         this.#node_diameter = 2 * this.#node_radius;
-        this.#max_distance = 2 * this.#node_diameter; //TODO: play with this number, it actually is the maximum distance between 2 nodes
+        this.#max_distance = 3 * this.#node_diameter; //TODO: play with this number, it actually is the maximum distance between 2 nodes
 
         this.#min_x = min_x;
         this.#min_y = min_y;
@@ -34,7 +34,7 @@ export class ForceDirectedGravityStrategy extends GraphVisualizationStrategy {
 
         this.#center_pos = [0, 0];
 
-        this.#forces_dumping = 1//0.85;
+        this.#forces_dumping = 0.85;
         this.#temp_cooldown_factor = 1//0.99;
     }
 
@@ -65,6 +65,22 @@ export class ForceDirectedGravityStrategy extends GraphVisualizationStrategy {
         this.#center_pos[1] /= nodes_list.size(); // top
         nodes_pos.set("graph_center", this.#center_pos);
 
+            //TODO: ------------------------------------debug
+            //nodes_pos.set("Git", [131, 215]);
+            //nodes_pos.set("C", [305, 421]);
+            //nodes_pos.set("C++", [535, 165]);
+            //this.#center_pos = [0, 0];
+            //nodes_list.forEach((node, idx) => {
+            //    const pos = nodes_pos.get(node);
+            //    this.#center_pos[0] += pos[0];
+            //    this.#center_pos[1] += pos[1]; 
+            //});
+            //this.#center_pos[0] /= nodes_list.size(); // left
+            //this.#center_pos[1] /= nodes_list.size(); // top
+            ////this.#center_pos = [0, 0];
+            //nodes_pos.set("graph_center", this.#center_pos);
+            //TODO: ------------------------------------debug
+
         return nodes_pos;
     }
 
@@ -88,25 +104,25 @@ export class ForceDirectedGravityStrategy extends GraphVisualizationStrategy {
                 other_nodes.push(other_node);
             });
 
-            // Calculate the attractive forces of the current node
-            node_nbs.forEach((nb, idx) => {
-                const forces = this.#attractiveForce(nodes_pos, nb, node);
-                node_forces[0] = node_forces[1] + forces[0];
-                node_forces[1] = node_forces[1] + forces[1];
-            });
-
             // Calculate repulsive forces of the current node
             other_nodes.forEach((other_node, idx) => {
                 const forces = this.#repulsiveForce(nodes_pos, node, other_node);
-                node_forces[0] = node_forces[1] + forces[0];
-                node_forces[1] = node_forces[1] + forces[1];
+                node_forces[0] += forces[0];
+                node_forces[1] += forces[1];
+            });
+
+            // Calculate the attractive forces of the current node
+            node_nbs.forEach((nb, idx) => {
+                const forces = this.#attractiveForce(nodes_pos, nb, node);
+                node_forces[0] += forces[0];
+                node_forces[1] += forces[1];
             });
 
             // Calculate the attractive force to the center of the graph
             {
                 const forces = this.#centerForce(nodes_pos, node);
-                node_forces[0] = node_forces[1] + forces[0];
-                node_forces[1] = node_forces[1] + forces[1];
+                node_forces[0] += forces[0];
+                node_forces[1] += forces[1];
             }
             
             // Limiting of the forces' strength
@@ -152,19 +168,17 @@ export class ForceDirectedGravityStrategy extends GraphVisualizationStrategy {
 
         return [
             delta_x / distance * force,
-            delta_x / distance * force
+            delta_y / distance * force
         ];
     }
 
     #centerForce(nodes_pos, node) { 
         const [delta_x, delta_y] = this.#distanceL1(nodes_pos, "graph_center", node);
-
-        const distance_2 = delta_x * delta_x + delta_y * delta_y;
-        const k_center_force = 1e1 / (this.#max_distance * 1e0);
+        const force = 1e1 / (this.#max_distance * 1e1);
 
         return [
-            delta_x * k_center_force,
-            delta_y * k_center_force,
+            delta_x * force,
+            delta_y * force,
         ];
     }
 
@@ -197,7 +211,5 @@ export class ForceDirectedGravityStrategy extends GraphVisualizationStrategy {
             node_forces[0] *= this.#forces_dumping;
             node_forces[1] *= this.#forces_dumping;
         }
-
-        //console.log(Math.sqrt(node_forces[0] * node_forces[0] + node_forces[1] * node_forces[1]) >= 1);
     }
 }
