@@ -1,10 +1,10 @@
 import {
     Queue
-} from "../../dsa/queue.js";
+} from "/dsa/queue.js";
 
 import {
     GraphExplorationStrategy
-} from "./strategy_iterface.js";
+} from "/algorithms/graph_exploration/strategy_interface.js";
 
 export class BFSStrategy extends GraphExplorationStrategy {
     explore(graph) {

@@ -1,10 +1,10 @@
 import {
     IterableSet
-} from "../../dsa/iterable_set.js";
+} from "/dsa/iterable_set.js";
 
 import {
     GraphVisualizationStrategy
-} from "./strategy_interface.js";
+} from "/algorithms/graph_visualization/strategy_interface.js";
 
 // Source: https://i11www.iti.kit.edu/_media/teaching/winter2016/graphvis/graphvis-ws16-v6.pdf
 export class SpringEmbedderEadesStrategy extends GraphVisualizationStrategy {

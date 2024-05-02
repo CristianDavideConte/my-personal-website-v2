@@ -1,10 +1,10 @@
 import {
     Iterable
-} from "./iterable.js";
+} from "/dsa/iterable.js";
 
 import {
     DoublyLinkedList
-} from "./doubly_linked_list.js";
+} from "/dsa/doubly_linked_list.js";
 
 export class Queue extends Iterable {
     #head;

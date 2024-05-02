@@ -1,6 +1,6 @@
 import {
     Iterable
-} from "./iterable.js";
+} from "/dsa/iterable.js";
 
 export class DoublyLinkedList extends Iterable {
     _value;

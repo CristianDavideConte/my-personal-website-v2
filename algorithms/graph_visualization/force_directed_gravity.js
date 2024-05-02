@@ -1,10 +1,10 @@
 import {
     IterableSet
-} from "../../dsa/iterable_set.js";
+} from "/dsa/iterable_set.js";
 
 import {
     GraphVisualizationStrategy
-} from "./strategy_interface.js";
+} from "/algorithms/graph_visualization/strategy_interface.js";
 
 // Source: https://i11www.iti.kit.edu/_media/teaching/winter2016/graphvis/graphvis-ws16-v6.pdf
 export class ForceDirectedGravityStrategy extends GraphVisualizationStrategy {
@@ -14,7 +14,6 @@ export class ForceDirectedGravityStrategy extends GraphVisualizationStrategy {
     #max_y;
     #center_pos;
 
-    #node_radius;
     #forces_dumping; // force multiplier
     #temp_cooldown_factor; // forces_dumping cooldown factor
     #node_diameter;
@@ -23,89 +22,69 @@ export class ForceDirectedGravityStrategy extends GraphVisualizationStrategy {
     constructor(min_x, min_y, max_x, max_y) {
         super();
 
-        this.#node_radius = 15; //TODO, make this an input parameter
-        this.#node_diameter = 2 * this.#node_radius;
-        this.#max_distance = 3 * this.#node_diameter; //TODO: play with this number, it actually is the maximum distance between 2 nodes
+        this.#node_diameter = 100; // In px
+        this.#max_distance = 4 * this.#node_diameter; //TODO: play with this number, it actually is the maximum distance between 2 nodes
 
         this.#min_x = min_x;
         this.#min_y = min_y;
         this.#max_x = max_x - this.#node_diameter;
         this.#max_y = max_y - this.#node_diameter;
 
-        this.#center_pos = [0, 0];
+        this.#center_pos = [
+            (this.#min_x + this.#max_x) / 2,
+            (this.#min_y + this.#max_y) / 2
+        ];
 
         this.#forces_dumping = 0.85;
-        this.#temp_cooldown_factor = 1//0.99;
+        this.#temp_cooldown_factor = 1//0.9999;
     }
 
     getInitialNodePositions(graph) {
         const nodes_list = new IterableSet(graph.nodes());
         const nodes_pos = new Map();
 
-        //let prev_x = Math.random() * (this.#max_x - this.#min_x) + this.#min_x;
-        //let prev_y = Math.random() * (this.#max_y - this.#min_y) + this.#min_y;
-
         nodes_list.forEach((node, idx) => {
-            //const new_x = Math.min(this.#max_x, Math.max(this.#min_x, prev_x + (Math.random() * 2 - 1) * this.#node_diameter));
-            //const new_y = Math.min(this.#max_y, Math.max(this.#min_y, prev_y + (Math.random() * 2 - 1) * this.#node_diameter));
-
-            //prev_x = new_x;
-            //prev_y = new_y;
-
             const new_x = Math.random() * (this.#max_x - this.#min_x) + this.#min_x;
             const new_y = Math.random() * (this.#max_y - this.#min_y) + this.#min_y;
-
-            this.#center_pos[0] += new_x;
-            this.#center_pos[1] += new_y; 
-
             nodes_pos.set(node, [new_x, new_y]);
         });
-
-        this.#center_pos[0] /= nodes_list.size(); // left
-        this.#center_pos[1] /= nodes_list.size(); // top
+        
         nodes_pos.set("graph_center", this.#center_pos);
 
-            //TODO: ------------------------------------debug
-            //nodes_pos.set("Git", [131, 215]);
-            //nodes_pos.set("C", [305, 421]);
-            //nodes_pos.set("C++", [535, 165]);
-            //this.#center_pos = [0, 0];
-            //nodes_list.forEach((node, idx) => {
-            //    const pos = nodes_pos.get(node);
-            //    this.#center_pos[0] += pos[0];
-            //    this.#center_pos[1] += pos[1]; 
-            //});
-            //this.#center_pos[0] /= nodes_list.size(); // left
-            //this.#center_pos[1] /= nodes_list.size(); // top
-            ////this.#center_pos = [0, 0];
-            //nodes_pos.set("graph_center", this.#center_pos);
-            //TODO: ------------------------------------debug
+        //TODO: ------------------------------------debug
+        //nodes_pos.set("Git", [131, 215]);
+        //nodes_pos.set("C", [305, 421]);
+        //nodes_pos.set("C++", [535, 165]);
+        //this.#center_pos = [0, 0];
+        //nodes_list.forEach((node, idx) => {
+        //    const pos = nodes_pos.get(node);
+        //    this.#center_pos[0] += pos[0];
+        //    this.#center_pos[1] += pos[1]; 
+        //});
+        //this.#center_pos[0] /= nodes_list.size(); // left
+        //this.#center_pos[1] /= nodes_list.size(); // top
+        ////this.#center_pos = [0, 0];
+        //nodes_pos.set("graph_center", this.#center_pos);
+        //TODO: ------------------------------------debug
 
         return nodes_pos;
     }
 
     updatePlacement(graph, initial_poses) {
         let nodes_list = new IterableSet(graph.nodes());
-
         const nodes_pos = initial_poses;
 
         // Calculate the forces acting on each node
         nodes_list.forEach((node, idx) => {
             const node_nbs = graph.neighborsOf(node);
-            const other_nodes = [];
 
             let node_pos = nodes_pos.get(node);
             let node_forces = [0, 0];
 
-            // Find nodes that are not neighbors of the current node
+            // Calculate repulsive forces of the current node
             nodes_list.forEach((other_node, idx) => {
                 if (node == other_node) return;
-                //if (node_nbs.includes(other_node)) return;
-                other_nodes.push(other_node);
-            });
 
-            // Calculate repulsive forces of the current node
-            other_nodes.forEach((other_node, idx) => {
                 const forces = this.#repulsiveForce(nodes_pos, node, other_node);
                 node_forces[0] += forces[0];
                 node_forces[1] += forces[1];
@@ -146,7 +125,7 @@ export class ForceDirectedGravityStrategy extends GraphVisualizationStrategy {
         
         const distance_2 = delta_x * delta_x + delta_y * delta_y;
         const distance = Math.sqrt(distance_2);
-        const gravity_distance_2 = 1e1 * this.#max_distance * this.#max_distance;
+        const gravity_distance_2 = 5e0 * this.#max_distance * this.#max_distance;
         const force = gravity_distance_2 / distance_2;
 
         return [
@@ -161,7 +140,7 @@ export class ForceDirectedGravityStrategy extends GraphVisualizationStrategy {
         const distance_2 = delta_x * delta_x + delta_y * delta_y;
         const distance = Math.sqrt(distance_2);
 
-        if (distance <= this.#max_distance) return [0, 0];
+        //if (distance <= this.#max_distance) return [0, 0];
 
         const kof = 1e1 / this.#max_distance;
         const force = kof * (distance - this.#max_distance);

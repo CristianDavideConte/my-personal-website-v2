@@ -3,6 +3,7 @@
         <meta charset = "UTF-8">
         <meta name = "Description" content = "Cristian D. Conte - Computer Engineer">
         <meta name = "viewport" content = "width=device-width, initial-scale=1.0">
+        <base href="./" target="_blank">
         <title>Cristian D. Conte</title>
     
         <script async type="module" src="./dsa/iterable_array.js"></script>
@@ -420,14 +421,15 @@
                 ["Python", "Tensorflow"],                
                 ["Python", "Pytorch"],                
                 ["Tensorflow", "Pytorch"],                
-                ["Tensorflow", "V.I.T."],                
-                ["Pytorch", "V.I.T."],                
+                //["Tensorflow", "ViT"],                
+                //["Pytorch", "ViT"],                
             ];
             
-            const min_x = 0;
-            const min_y = 0;
-            const max_x = window.innerWidth;
-            const max_y = window.innerHeight;
+            const padding = 50;
+            const min_x = padding;
+            const min_y = padding;
+            const max_x = window.innerWidth - padding;
+            const max_y = window.innerHeight - padding;
 
             //const strategy = new DFSStrategy();
             const strategy = new BFSStrategy();  
@@ -436,8 +438,8 @@
             const graph = new Graph(adj_list, isDirectedGraph, strategy); 
 
             //const visualization_strategy = new SpringEmbedderEadesStrategy(min_x, min_y, max_x, max_y);
-            //const visualization_strategy = new SpringEmbedderFruchtermanStrategy(min_x, min_y, max_x, max_y);
-            const visualization_strategy = new ForceDirectedGravityStrategy(min_x, min_y, max_x, max_y);
+            const visualization_strategy = new SpringEmbedderFruchtermanStrategy(min_x, min_y, max_x, max_y);
+            //const visualization_strategy = new ForceDirectedGravityStrategy(min_x, min_y, max_x, max_y);
 
             let nodes_pos = visualization_strategy.getInitialNodePositions(graph);
 
@@ -446,12 +448,14 @@
 
             const create_visual_node = (node) => {
                 const div_el = document.createElement("div");
+                const img_el = document.createElement("img");
                 const node_pos = nodes_pos.get(node);
                 
                 div_el.className = "programming_languages_node";
                 div_el.style.transform = `translate3d(${node_pos[0]}px, ${node_pos[1]}px, 0px)`;
-                div_el.innerHTML = node;
+                img_el.src = `imgs/page_4/${node}.png`;
 
+                div_el.appendChild(img_el);
                 nodes_mapping.set(node, div_el);
 
                 return div_el;
@@ -460,12 +464,12 @@
             nodes.forEach((el, idx) => document.getElementById("page4").appendChild(create_visual_node(el)));
 
             let num_iter = 0;
-            let max_num_iter = 1000;
-            let milliseconds = 20;
+            let max_num_iter = 10000;
+            let milliseconds = 10;
 
             setTimeout(() => {
                 while(num_iter < max_num_iter){
-                    setTimeout(() => {
+                    //setTimeout(() => {
                         nodes_pos = visualization_strategy.updatePlacement(graph, nodes_pos);
                         
                         nodes.forEach((el, idx) => {
@@ -476,7 +480,7 @@
                         document.getElementById("page4").className = Number.parseInt(
                             document.getElementById("page4").className || "0"
                         ) + 1; // TODO: debug, remove
-                    }, milliseconds * num_iter);
+                    //}, milliseconds * num_iter);
 
                     num_iter++;
                 }

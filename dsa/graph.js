@@ -1,6 +1,6 @@
 import {
     Iterable
-} from "./iterable.js";
+} from "/dsa/iterable.js";
 
 export class Graph extends Iterable {
     #starting_node;

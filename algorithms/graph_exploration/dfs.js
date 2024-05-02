@@ -1,6 +1,6 @@
 import {
     GraphExplorationStrategy
-} from "./strategy_iterface.js";
+} from "/algorithms/graph_exploration/strategy_interface.js";
 
 export class DFSStrategy extends GraphExplorationStrategy {
     explore(graph) {
