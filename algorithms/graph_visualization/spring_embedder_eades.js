@@ -13,28 +13,28 @@ export class SpringEmbedderEadesStrategy extends GraphVisualizationStrategy {
     #max_x;
     #max_y;
 
-    #node_radius;
+    #node_diameter;
     #delta; // force multiplier
     #c_rep; // repulsive constant
     #c_spring; // spring constant
     #l_spring; // spring length
     #temp_cooldown_factor; // delta cooldown factor 
 
-    constructor(min_x, min_y, max_x, max_y) {
+    constructor(min_x, min_y, max_x, max_y, node_diameter) {
         super();
 
-        this.#node_radius = 50; //TODO, make this an input parameter
+        this.#node_diameter = node_diameter; // In px
 
         this.#min_x = min_x;
         this.#min_y = min_y;
-        this.#max_x = max_x - (2 * this.#node_radius);
-        this.#max_y = max_y - (2 * this.#node_radius);
+        this.#max_x = max_x - this.#node_diameter;
+        this.#max_y = max_y - this.#node_diameter;
 
         this.#delta = 1;
-        this.#c_rep = 1e0; 
+        this.#c_rep = 2e0; 
         this.#c_spring = 1e1;
-        this.#l_spring = 1e2;
-        this.#temp_cooldown_factor = 1//0.999;
+        this.#l_spring = 2e2;
+        this.#temp_cooldown_factor = 0.99;
     }
 
     getInitialNodePositions(graph) {
@@ -48,8 +48,8 @@ export class SpringEmbedderEadesStrategy extends GraphVisualizationStrategy {
         let prev_y = Math.random() * (this.#max_y - this.#min_y) + this.#min_y;
 
         nodes_list.forEach((node, idx) => {
-            const new_x = Math.min(this.#max_x, Math.max(this.#min_x, prev_x + (Math.random() * 2 - 1) * 2 * this.#node_radius));
-            const new_y = Math.min(this.#max_y, Math.max(this.#min_y, prev_y + (Math.random() * 2 - 1) * 2 * this.#node_radius));
+            const new_x = Math.min(this.#max_x, Math.max(this.#min_x, prev_x + (Math.random() * 2 - 1) * this.#node_diameter));
+            const new_y = Math.min(this.#max_y, Math.max(this.#min_y, prev_y + (Math.random() * 2 - 1) * this.#node_diameter));
 
             prev_x = new_x;
             prev_y = new_y;
@@ -69,18 +69,9 @@ export class SpringEmbedderEadesStrategy extends GraphVisualizationStrategy {
         // Calculate the forces acting on each node
         nodes_list.forEach((node, idx) => {
             const node_nbs = graph.neighborsOf(node);
-            const other_nodes = [];
-
             let node_pos = nodes_pos.get(node);
             let node_forces = [0, 0];
                     
-            // Find nodes that are not neighbors of the current node
-            nodes_list.forEach((other_node, idx) => {
-                if (node == other_node) return;
-                if (node_nbs.includes(other_node)) return;
-                other_nodes.push(other_node);
-            });
-
             // Calculate the attractive forces of the current node
             node_nbs.forEach((nb, idx) => {
                 const forces = this.#attractiveForce(nodes_pos, nb, node);
@@ -89,7 +80,10 @@ export class SpringEmbedderEadesStrategy extends GraphVisualizationStrategy {
             });
 
             // Calculate repulsive forces of the current node
-            other_nodes.forEach((other_node, idx) => {
+            nodes_list.forEach((other_node, idx) => {
+                if (node == other_node) return;
+                if (node_nbs.includes(other_node)) return;
+
                 const forces = this.#repulsiveForce(nodes_pos, node, other_node);
                 node_forces[0] += forces[0];
                 node_forces[1] += forces[1];

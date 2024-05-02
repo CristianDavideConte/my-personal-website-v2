@@ -19,10 +19,10 @@ export class ForceDirectedGravityStrategy extends GraphVisualizationStrategy {
     #node_diameter;
     #max_distance;
 
-    constructor(min_x, min_y, max_x, max_y) {
+    constructor(min_x, min_y, max_x, max_y, node_diameter) {
         super();
 
-        this.#node_diameter = 100; // In px
+        this.#node_diameter = node_diameter; // In px
         this.#max_distance = 4 * this.#node_diameter; //TODO: play with this number, it actually is the maximum distance between 2 nodes
 
         this.#min_x = min_x;
@@ -50,22 +50,6 @@ export class ForceDirectedGravityStrategy extends GraphVisualizationStrategy {
         });
         
         nodes_pos.set("graph_center", this.#center_pos);
-
-        //TODO: ------------------------------------debug
-        //nodes_pos.set("Git", [131, 215]);
-        //nodes_pos.set("C", [305, 421]);
-        //nodes_pos.set("C++", [535, 165]);
-        //this.#center_pos = [0, 0];
-        //nodes_list.forEach((node, idx) => {
-        //    const pos = nodes_pos.get(node);
-        //    this.#center_pos[0] += pos[0];
-        //    this.#center_pos[1] += pos[1]; 
-        //});
-        //this.#center_pos[0] /= nodes_list.size(); // left
-        //this.#center_pos[1] /= nodes_list.size(); // top
-        ////this.#center_pos = [0, 0];
-        //nodes_pos.set("graph_center", this.#center_pos);
-        //TODO: ------------------------------------debug
 
         return nodes_pos;
     }

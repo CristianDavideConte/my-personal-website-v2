@@ -425,6 +425,7 @@
                 //["Pytorch", "ViT"],                
             ];
             
+            const node_diameter = 100; // px
             const padding = 50;
             const min_x = padding;
             const min_y = padding;
@@ -437,9 +438,9 @@
             const isDirectedGraph = false;
             const graph = new Graph(adj_list, isDirectedGraph, strategy); 
 
-            //const visualization_strategy = new SpringEmbedderEadesStrategy(min_x, min_y, max_x, max_y);
-            const visualization_strategy = new SpringEmbedderFruchtermanStrategy(min_x, min_y, max_x, max_y);
-            //const visualization_strategy = new ForceDirectedGravityStrategy(min_x, min_y, max_x, max_y);
+            const visualization_strategy = new SpringEmbedderEadesStrategy(min_x, min_y, max_x, max_y, node_diameter);
+            //const visualization_strategy = new SpringEmbedderFruchtermanStrategy(min_x, min_y, max_x, max_y, node_diameter);
+            //const visualization_strategy = new ForceDirectedGravityStrategy(min_x, min_y, max_x, max_y, node_diameter);
 
             let nodes_pos = visualization_strategy.getInitialNodePositions(graph);
 
