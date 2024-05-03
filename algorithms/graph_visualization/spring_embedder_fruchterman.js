@@ -1,6 +1,6 @@
 import {
     IterableSet
-} from "/dsa/iterable_set.js";
+} from "../../dsa/iterable_set.js";
 
 import {
     GraphVisualizationStrategy

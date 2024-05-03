@@ -1,6 +1,6 @@
 import {
     Queue
-} from "/dsa/queue.js";
+} from "../../dsa/queue.js";
 
 import {
     GraphExplorationStrategy

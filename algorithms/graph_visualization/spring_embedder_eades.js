@@ -1,6 +1,6 @@
 import {
     IterableSet
-} from "/dsa/iterable_set.js";
+} from "../../dsa/iterable_set.js";
 
 import {
     GraphVisualizationStrategy
@@ -34,7 +34,7 @@ export class SpringEmbedderEadesStrategy extends GraphVisualizationStrategy {
         this.#c_rep = 2e0; 
         this.#c_spring = 1e1;
         this.#l_spring = 2e2;
-        this.#temp_cooldown_factor = 0.99;
+        this.#temp_cooldown_factor = 1//0.99;
     }
 
     getInitialNodePositions(graph) {

@@ -412,7 +412,8 @@
                 //["Pytorch", "ViT"],                
             ];
             
-            const node_diameter = 100; // px
+            const node_radius = 50;
+            const node_diameter = 2 * node_radius; // px
             const padding = 50;
             const min_x = padding;
             const min_y = padding;
@@ -433,15 +434,61 @@
 
             const nodes = new IterableSet(graph.nodes());
             const nodes_mapping = new Map();
+            let enable_drag = false;
+
+            const create_visual_edge = (edge) => {
+                const div_el = document.createElement("div");
+                const from_pos = nodes_pos.get(edge[0]);
+                const to_pos = nodes_pos.get(edge[1]);
+
+                const l = Math.sqrt(Math.pow(from_pos[0] - to_pos[0], 2) + Math.pow(from_pos[1] - to_pos[1], 2));
+                const d = Math.sqrt(Math.pow(from_pos[0] - to_pos[0], 2) + Math.pow(from_pos[1] - to_pos[1] + l, 2));
+                
+                const sign = from_pos[0] > to_pos[0] ? 1 : -1;
+                const angle = sign * Math.acos(1 - Math.pow(d, 2) / (2 * Math.pow(l, 2)));
+                
+                div_el.className = "programming_language_edge";
+                div_el.setAttribute("data-from", edge[0]);
+                div_el.setAttribute("data-to", edge[1]);
+                div_el.setAttribute("data-angle", angle);
+                div_el.style.transform = `translate3d(${from_pos[0] + node_radius}px, ${from_pos[1] + node_radius}px, 0px) rotate(${angle}rad) scaleY(${l})`;
+
+                return div_el;
+            };
 
             const create_visual_node = (node) => {
                 const div_el = document.createElement("div");
                 const img_el = document.createElement("img");
                 const node_pos = nodes_pos.get(node);
+                let track_drag = false;
                 
                 div_el.className = "programming_languages_node";
                 div_el.style.transform = `translate3d(${node_pos[0]}px, ${node_pos[1]}px, 0px)`;
                 img_el.src = `imgs/page_4/${node}.png`;
+
+                div_el.addEventListener("mousedown", () => {
+                    if(!enable_drag) return;
+                    track_drag = true;
+                    div_el.classList.add("dragged");
+                }, {passive: true});
+
+                window.addEventListener("mousemove", (event) => {
+                    if(!track_drag) return;
+                    
+                    const node_pos = nodes_pos.get(node);
+                    node_pos[0] += event.movementX;
+                    node_pos[1] += event.movementY;
+
+                    move_nodes(false);
+                }, {passive: true});
+
+                window.addEventListener("mouseup", () => {
+                    if(!enable_drag || !track_drag) return;
+
+                    track_drag = false;
+                    div_el.classList.remove("dragged");
+                    move_nodes(true);
+                }, {passive: true});
 
                 div_el.appendChild(img_el);
                 nodes_mapping.set(node, div_el);
@@ -449,29 +496,59 @@
                 return div_el;
             };
 
+            const move_nodes = (run_physics = true) => {
+                if(run_physics) {
+                    nodes_pos = visualization_strategy.updatePlacement(graph, nodes_pos);
+                }
+                        
+                nodes.forEach((el, idx) => {
+                    const node_pos = nodes_pos.get(el);
+                    nodes_mapping.get(el).style.transform = `translate3d(${node_pos[0]}px, ${node_pos[1]}px, 0px)`;
+                    nodes_mapping.get(el).style.transition = run_physics ? "" : "0s";
+                });
+
+                edges.forEach((el, idx) => {
+                    const from_pos = nodes_pos.get(el.getAttribute("data-from"));
+                    const to_pos = nodes_pos.get(el.getAttribute("data-to"));
+                    const old_angle = el.getAttribute("data-angle");
+
+                    const l = Math.sqrt(Math.pow(from_pos[0] - to_pos[0], 2) + Math.pow(from_pos[1] - to_pos[1], 2));
+                    const d = Math.sqrt(Math.pow(from_pos[0] - to_pos[0], 2) + Math.pow(from_pos[1] - to_pos[1] + l, 2));
+                    
+                    const sign = from_pos[0] > to_pos[0] ? 1 : -1;
+                    const angle = sign * Math.acos(1 - Math.pow(d, 2) / (2 * Math.pow(l, 2)));
+
+                    el.style.transform = `translate3d(${from_pos[0] + node_radius}px, ${from_pos[1] + node_radius}px, 0px) rotate(${angle}rad) scaleY(${l})`;
+                    el.style.transition = run_physics ? "" : "0s";
+                });
+            }
+
+            const edges = [];
+            adj_list.forEach((el, idx) => {
+                edges[idx] = create_visual_edge(el);
+                document.getElementById("page4").appendChild(edges[idx]);
+            });
+
             nodes.forEach((el, idx) => document.getElementById("page4").appendChild(create_visual_node(el)));
 
             let num_iter = 0;
-            let max_num_iter = 10000;
-            let milliseconds = 10;
+            let max_num_iter = 100;
+            let milliseconds = 1;
 
-            setTimeout(() => {
-                while(num_iter < max_num_iter){
-                    //setTimeout(() => {
-                        nodes_pos = visualization_strategy.updatePlacement(graph, nodes_pos);
-                        
-                        nodes.forEach((el, idx) => {
-                            const node_pos = nodes_pos.get(el);
-                            nodes_mapping.get(el).style.transform = `translate3d(${node_pos[0]}px, ${node_pos[1]}px, 0px)`;
-                        });
-
-                        document.getElementById("page4").className = Number.parseInt(
-                            document.getElementById("page4").className || "0"
-                        ) + 1; // TODO: debug, remove
-                    //}, milliseconds * num_iter);
-
-                    num_iter++;
+            setTimeout(function update_nodes_and_edges() {
+                if(num_iter == max_num_iter) {
+                    enable_drag = true;
+                    return;
                 }
+
+                move_nodes();
+                num_iter++;
+
+                document.getElementById("page4").className = Number.parseInt(
+                    document.getElementById("page4").className || "0"
+                ) + 1; // TODO: debug, remove
+
+                setTimeout(update_nodes_and_edges, milliseconds * num_iter);
             }, 0);
         }
     });
