@@ -1,6 +1,6 @@
 import {
     Iterable
-} from "/dsa/iterable.js";
+} from "./iterable.js";
 
 export class IterableArray extends Iterable {
     #arr;

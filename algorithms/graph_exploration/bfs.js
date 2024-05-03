@@ -4,7 +4,7 @@ import {
 
 import {
     GraphExplorationStrategy
-} from "/algorithms/graph_exploration/strategy_interface.js";
+} from "./strategy_interface.js";
 
 export class BFSStrategy extends GraphExplorationStrategy {
     explore(graph) {
