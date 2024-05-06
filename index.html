@@ -14,10 +14,11 @@
     </head>
 
     <body>
-        <div id = "page1"></div>
-        <div id = "page2"></div>
-        <div id = "page3"></div>
-        <div id = "page4"></div>
+        <div id = "page1"></div> <!-- Name and Title -->
+        <div id = "page2"></div> <!-- Professional Experience -->
+        <div id = "page3"></div> <!-- Personal Projects -->
+        <div id = "page4"></div> <!-- Languages and Frameworks -->
+        <div id = "page5"></div> <!-- Contact me -->
     </body>
 </html>
 
@@ -449,12 +450,13 @@
                 const sign = from_pos[0] > to_pos[0] ? 1 : -1;
                 let angle = sign * Math.acos(1 - Math.pow(d, 2) / (2 * Math.pow(l, 2)));
                 angle = to_0_360_range(to_degrees(angle));
+                angle = Math.trunc(angle);
                 
                 div_el.className = "programming_language_edge";
                 div_el.setAttribute("data-from", edge[0]);
                 div_el.setAttribute("data-to", edge[1]);
                 div_el.setAttribute("data-angle", angle);
-                div_el.style.transform = `translate3d(${from_pos[0] + node_radius}px, ${from_pos[1] + node_radius}px, 0px) rotate(${angle}deg) scaleY(${l})`;
+                div_el.style.transform = `translate3d(${from_pos[0] + node_radius}px, ${from_pos[1] + node_radius}px, 0px) rotate(${angle}deg) scaleY(${Math.trunc(l)})`;
                 div_el.style.transition = "0s";
 
                 return div_el;
@@ -540,7 +542,7 @@
                     angle = Math.trunc(angle);
 
                     el.setAttribute("data-angle", angle);
-                    el.style.transform = `translate3d(${from_pos[0] + node_radius}px, ${from_pos[1] + node_radius}px, 0px) rotate(${angle}deg) scaleY(${l})`;
+                    el.style.transform = `translate3d(${from_pos[0] + node_radius}px, ${from_pos[1] + node_radius}px, 0px) rotate(${angle}deg) scaleY(${Math.trunc(l)})`;
                     el.style.transition = run_physics ? "" : "0s";
                 });
             }
@@ -574,4 +576,12 @@
             }, 0);
         }
     });
+
+    
+    {   
+        //Page 5 elements
+        let grid = [];
+
+        
+    }
 </script>
