@@ -95,7 +95,13 @@ export class ForceDirectedGravityStrategy extends GraphVisualizationStrategy {
 
             node_pos[0] = Math.min(this.#max_x, Math.max(this.#min_x, node_pos[0] + node_forces[0]));
             node_pos[1] = Math.min(this.#max_y, Math.max(this.#min_y, node_pos[1] + node_forces[1]));
-
+            
+            // Only use integer positions
+            {
+                node_pos[0] = Math.trunc(node_pos[0]);
+                node_pos[1] = Math.trunc(node_pos[1]);
+            }
+            
             nodes_pos.set(node, node_pos);
         });
 

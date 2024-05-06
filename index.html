@@ -444,14 +444,18 @@
                 const l = Math.sqrt(Math.pow(from_pos[0] - to_pos[0], 2) + Math.pow(from_pos[1] - to_pos[1], 2));
                 const d = Math.sqrt(Math.pow(from_pos[0] - to_pos[0], 2) + Math.pow(from_pos[1] - to_pos[1] + l, 2));
                 
+                const to_degrees = (a) => a * 180 / Math.PI;
+                const to_0_360_range = (a) => a < 0 ? a + 360 : a;
                 const sign = from_pos[0] > to_pos[0] ? 1 : -1;
-                const angle = sign * Math.acos(1 - Math.pow(d, 2) / (2 * Math.pow(l, 2)));
+                let angle = sign * Math.acos(1 - Math.pow(d, 2) / (2 * Math.pow(l, 2)));
+                angle = to_0_360_range(to_degrees(angle));
                 
                 div_el.className = "programming_language_edge";
                 div_el.setAttribute("data-from", edge[0]);
                 div_el.setAttribute("data-to", edge[1]);
                 div_el.setAttribute("data-angle", angle);
-                div_el.style.transform = `translate3d(${from_pos[0] + node_radius}px, ${from_pos[1] + node_radius}px, 0px) rotate(${angle}rad) scaleY(${l})`;
+                div_el.style.transform = `translate3d(${from_pos[0] + node_radius}px, ${from_pos[1] + node_radius}px, 0px) rotate(${angle}deg) scaleY(${l})`;
+                div_el.style.transition = "0s";
 
                 return div_el;
             };
@@ -510,15 +514,33 @@
                 edges.forEach((el, idx) => {
                     const from_pos = nodes_pos.get(el.getAttribute("data-from"));
                     const to_pos = nodes_pos.get(el.getAttribute("data-to"));
-                    const old_angle = el.getAttribute("data-angle");
+                    const old_angle = Number.parseFloat(el.getAttribute("data-angle"));
 
                     const l = Math.sqrt(Math.pow(from_pos[0] - to_pos[0], 2) + Math.pow(from_pos[1] - to_pos[1], 2));
                     const d = Math.sqrt(Math.pow(from_pos[0] - to_pos[0], 2) + Math.pow(from_pos[1] - to_pos[1] + l, 2));
                     
+                    //TODO: put this statements into a function and use it for the angle initialization too
+                    const to_degrees = (a) => a * 180 / Math.PI;
+                    const to_0_360_range = (a) => a < 0 ? a + 360 : a;
                     const sign = from_pos[0] > to_pos[0] ? 1 : -1;
-                    const angle = sign * Math.acos(1 - Math.pow(d, 2) / (2 * Math.pow(l, 2)));
+                    let angle = sign * Math.acos(1 - Math.pow(d, 2) / (2 * Math.pow(l, 2)));
+                    angle = to_0_360_range(to_degrees(angle));
+                    
+                    if(Math.abs(old_angle - angle) > 180) {
+                        const angle_1 = angle - (old_angle % 360);
+                        const angle_2 = 360 - Math.abs(angle_1);
 
-                    el.style.transform = `translate3d(${from_pos[0] + node_radius}px, ${from_pos[1] + node_radius}px, 0px) rotate(${angle}rad) scaleY(${l})`;
+                        if(Math.abs(angle_1) < angle_2) {
+                            angle = old_angle + angle_1;
+                        } else {
+                            angle = old_angle - Math.sign(angle_1) * angle_2;
+                        }
+                    }
+
+                    angle = Math.trunc(angle);
+
+                    el.setAttribute("data-angle", angle);
+                    el.style.transform = `translate3d(${from_pos[0] + node_radius}px, ${from_pos[1] + node_radius}px, 0px) rotate(${angle}deg) scaleY(${l})`;
                     el.style.transition = run_physics ? "" : "0s";
                 });
             }
@@ -533,7 +555,7 @@
 
             let num_iter = 0;
             let max_num_iter = 100;
-            let milliseconds = 1;
+            let milliseconds = 0.5;
 
             setTimeout(function update_nodes_and_edges() {
                 if(num_iter == max_num_iter) {

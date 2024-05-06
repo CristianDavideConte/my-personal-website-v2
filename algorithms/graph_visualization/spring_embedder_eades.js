@@ -31,7 +31,7 @@ export class SpringEmbedderEadesStrategy extends GraphVisualizationStrategy {
         this.#max_y = max_y - this.#node_diameter;
 
         this.#delta = 1;
-        this.#c_rep = 2e0; 
+        this.#c_rep = 3e0; 
         this.#c_spring = 1e1;
         this.#l_spring = 2e2;
         this.#temp_cooldown_factor = 1//0.99;
@@ -44,8 +44,8 @@ export class SpringEmbedderEadesStrategy extends GraphVisualizationStrategy {
         // Try to find the optimal c_rep
         this.#c_rep = this.#c_rep * (this.#max_x - this.#min_x) * (this.#max_y - this.#min_y) / nodes_list.size(); 
 
-        let prev_x = Math.random() * (this.#max_x - this.#min_x) + this.#min_x;
-        let prev_y = Math.random() * (this.#max_y - this.#min_y) + this.#min_y;
+        let prev_x = (this.#max_x + this.#min_x) / 2;
+        let prev_y = (this.#max_y + this.#min_y) / 2;
 
         nodes_list.forEach((node, idx) => {
             const new_x = Math.min(this.#max_x, Math.max(this.#min_x, prev_x + (Math.random() * 2 - 1) * this.#node_diameter));
@@ -64,7 +64,6 @@ export class SpringEmbedderEadesStrategy extends GraphVisualizationStrategy {
         let nodes_list = Array.from(graph.nodes()); //new IterableSet();
 
         const nodes_pos = initial_poses;
-        const nodes_forces = new Map();
 
         // Calculate the forces acting on each node
         nodes_list.forEach((node, idx) => {
@@ -82,7 +81,7 @@ export class SpringEmbedderEadesStrategy extends GraphVisualizationStrategy {
             // Calculate repulsive forces of the current node
             nodes_list.forEach((other_node, idx) => {
                 if (node == other_node) return;
-                if (node_nbs.includes(other_node)) return;
+                if (node_nbs.includes(other_node)) return; //TODO: try to comment this out
 
                 const forces = this.#repulsiveForce(nodes_pos, node, other_node);
                 node_forces[0] += forces[0];
@@ -91,8 +90,13 @@ export class SpringEmbedderEadesStrategy extends GraphVisualizationStrategy {
 
             node_pos[0] = Math.min(this.#max_x, Math.max(this.#min_x, node_pos[0] + this.#delta * node_forces[0]));
             node_pos[1] = Math.min(this.#max_y, Math.max(this.#min_y, node_pos[1] + this.#delta * node_forces[1]));
+            
+            // Only use integer positions
+            {
+                node_pos[0] = Math.trunc(node_pos[0]);
+                node_pos[1] = Math.trunc(node_pos[1]);
+            }
 
-            nodes_forces.set(node, node_forces);
             nodes_pos.set(node, node_pos);
         });
 
