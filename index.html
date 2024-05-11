@@ -40,6 +40,10 @@
     } from "./dsa/graph.js";
 
     import {
+        UInt8Matrix,
+    } from "./dsa/matrix/UInt8Matrix.js";
+
+    import {
         linear 
     } from "./algorithms/linear.js";
     
@@ -450,7 +454,6 @@
                 const sign = from_pos[0] > to_pos[0] ? 1 : -1;
                 let angle = sign * Math.acos(1 - Math.pow(d, 2) / (2 * Math.pow(l, 2)));
                 angle = to_0_360_range(to_degrees(angle));
-                angle = Math.trunc(angle);
                 
                 div_el.className = "programming_language_edge";
                 div_el.setAttribute("data-from", edge[0]);
@@ -539,8 +542,6 @@
                         }
                     }
 
-                    angle = Math.trunc(angle);
-
                     el.setAttribute("data-angle", angle);
                     el.style.transform = `translate3d(${from_pos[0] + node_radius}px, ${from_pos[1] + node_radius}px, 0px) rotate(${angle}deg) scaleY(${Math.trunc(l)})`;
                     el.style.transition = run_physics ? "" : "0s";
@@ -580,8 +581,15 @@
     
     {   
         //Page 5 elements
-        let grid = [];
+        const grid_rows = 10; //cells
+        const grid_cols = 5; //cells
+        const contacts_padding_space = 2; //cells
 
-        
+        let obstacles = [];
+        const grid = new UInt8Matrix(grid_rows, grid_cols);
+
+        grid.set(9, 4, 1);
+
+        console.log(grid.to_string());
     }
 </script>
