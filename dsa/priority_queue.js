@@ -6,11 +6,11 @@ export class PriorityQueue extends Iterable {
     #arr;
     #comparator;
 
-    constructor(comparator = (a, b) => a < b) {
+    constructor(comparator = (a, b) => a > b) {
         super();
 
         this.#arr = []; // arr[arr.length - 1] contains the top element in the queue
-        this.#comparator = comparator; // returns true if a should be inserted before b, false otherwise
+        this.#comparator = comparator; // returns true if the priority of a is < than priority of b, false otherwise
     }
 
     //O(log(n))

@@ -60,6 +60,10 @@
     } from "./algorithms/graph_exploration/bfs.js";
 
     import {
+        DijkstraPathFindingStrategy
+    } from "./algorithms/path_finding/dijkstra.js";
+
+    import {
         SpringEmbedderEadesStrategy
     } from "./algorithms/graph_visualization/spring_embedder_eades.js";
     
@@ -589,33 +593,22 @@
         const grid_cols = 5; //cells
         const contacts_padding_space = 2; //cells
 
-        let obstacles = [];
-        const grid = new UInt8MatrixBuilder(grid_rows, grid_cols);
+        const free_cell_symbol = 0;
+        const obstacle_cell_symbol = 1;
+        const goal_cell_symbol = 2;
 
-        grid.set(9, 4, 1);
+        let obstacles = [];
+        const matrix_builder = new UInt8MatrixBuilder(); 
+        const grid = matrix_builder.build(grid_rows, grid_cols);
+
+        grid.set(9, 4, goal_cell_symbol);
+        grid.set(9, 3, obstacle_cell_symbol);
 
         console.log(grid.to_string());
 
-        let q = new PriorityQueue();
-        console.log(q.top());
+        const path_finding_strategy = new DijkstraPathFindingStrategy(free_cell_symbol, obstacle_cell_symbol, goal_cell_symbol);
+        const exploration_order = path_finding_strategy.explore(grid, [0, 0], [9, 4]);
 
-        q.push(5);
-        q.push(7);
-        q.push(2);
-        q.push(5);
-        q.push(5);
-        q.push(6);
-        q.push(4);
-        q.push(12);
-        q.push(7);
-        q.push(9);
-        q.push(3);
-        q.push(100);
-        q.push(1);
-
-        console.log(q.to_string());
-        q.pop();
-        console.log(q.to_string());
-        console.log(q.top());
+        console.log(exploration_order);
     }
 </script>
