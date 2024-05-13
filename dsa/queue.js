@@ -8,12 +8,14 @@ import {
 export class Queue extends Iterable {
     #head;
     #tail;
+    #size;
 
     constructor() {
         super();
 
         this.#head = null;
         this.#tail = null;
+        this.#size = 0;
     }
 
     push(value) {
@@ -25,6 +27,8 @@ export class Queue extends Iterable {
             this.#tail._prev = new_tail;
             this.#tail = new_tail;
         }
+
+        this.#size++;
     }
 
     pop() {
@@ -35,6 +39,8 @@ export class Queue extends Iterable {
             this.#head = this.#head.prev();
             this.#head._next = null;
         }
+
+        this.#size = Math.max(0, this.#size - 1);
     }
 
     tail() {
@@ -47,6 +53,10 @@ export class Queue extends Iterable {
 
     isEmpty() {
         return !this.#tail;
+    }
+
+    size() {
+        return this.#size;
     }
 
     get iterator() {

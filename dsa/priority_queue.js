@@ -70,6 +70,11 @@ export class PriorityQueue extends Iterable {
         return this.#arr.length == 0;
     }
 
+    //O(1)
+    size() {
+        return this.#arr.length;
+    }
+
     get iterator() {
         let curr_idx = this.#arr.length - 1;
 

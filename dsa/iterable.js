@@ -1,5 +1,7 @@
 export class Iterable { // Abstract class
     get iterator() { return null };
+    
+    size() { return null; }
 
     forEach(callback = () => { }) {
         const iterator = this.iterator;
@@ -12,7 +14,7 @@ export class Iterable { // Abstract class
             curr_item = iterator.next();
             idx++;
         }
-    };
+    }
 
     to_string() {
         let str = "";

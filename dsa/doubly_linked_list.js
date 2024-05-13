@@ -27,6 +27,25 @@ export class DoublyLinkedList extends Iterable {
         return this._value;
     }
 
+    // O(n)
+    size() {
+        let size = 1;
+        let head = this.prev();
+        let tail = this.next();
+
+        while (head) {
+            head = head.prev();
+            size++;
+        }
+
+        while (tail) {
+            tail = tail.next();
+            size++;
+        }
+        
+        return size;
+    }
+
     get iterator() { 
         let curr_node = this;
 

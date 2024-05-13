@@ -56,6 +56,10 @@ export class Graph extends Iterable {
         return this.#nodes;
     }
 
+    size() {
+        return this.#nodes.size;
+    }
+
     get iterator() {
         const exploration_order = this.#exploration_strategy.explore(this);
         const n = exploration_order.length;

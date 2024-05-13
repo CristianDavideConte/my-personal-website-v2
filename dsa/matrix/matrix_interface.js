@@ -6,6 +6,7 @@ export class MatrixInterface extends Iterable {
     #rows;
     #cols;
     #matrix;
+    #size;
 
     constructor(rows, cols, matrix) { 
         super();
@@ -13,6 +14,7 @@ export class MatrixInterface extends Iterable {
         this.#rows = rows;
         this.#cols = cols;
         this.#matrix = matrix;
+        this.#size = this.#rows * this.#cols;
     };
     
     get(i, j) {
@@ -23,6 +25,11 @@ export class MatrixInterface extends Iterable {
     set(i, j, value) {
         this.check_bounds(i, j);
         this.#matrix[this.#cols * i + j] = value;
+    }
+
+    set_nth(idx, value) {
+        if (this.#matrix.length <= idx) throw new RangeError(`idx should be lesser than ${this.#matrix.length}`);
+        this.#matrix[idx] = value;
     }
 
     check_bounds(i, j) {
@@ -42,6 +49,10 @@ export class MatrixInterface extends Iterable {
         });
 
         return str.substring(0, str.length - 1);
+    }
+
+    size() {
+        return this.#size;
     }
 
     get rows() { 

@@ -599,10 +599,12 @@
 
         let obstacles = [];
         const matrix_builder = new UInt8MatrixBuilder(); 
-        const grid = matrix_builder.build(grid_rows, grid_cols);
+        const grid = matrix_builder.build(grid_rows, grid_cols, free_cell_symbol);
 
         grid.set(9, 4, goal_cell_symbol);
         grid.set(9, 3, obstacle_cell_symbol);
+        grid.set(1, 0, obstacle_cell_symbol);
+        grid.set(1, 1, obstacle_cell_symbol);
 
         console.log(grid.to_string());
 
