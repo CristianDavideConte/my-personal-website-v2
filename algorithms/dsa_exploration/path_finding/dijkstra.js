@@ -1,25 +1,26 @@
 import {
     PriorityQueue
-} from "../../dsa/priority_queue.js";
+} from "../../../dsa/priority_queue.js";
 
 import {
     UInt8MatrixBuilder
-} from "../../dsa/matrix/uint8_matrix_builder.js";
+} from "../../../dsa/matrix/uint8_matrix_builder.js";
 
 import {
     PathFindingStrategy
-} from "./strategy_interface.js";
+} from "./path_finding_strategy_interface.js";
 
 export class DijkstraPathFindingStrategy extends PathFindingStrategy {
     explore(grid, start, goal) {
         const exploration_order = [];
+        const path_retrieval_order = [];
 
-        this.#explore_impl(grid, exploration_order, start, goal);
+        this.#explore_impl(grid, exploration_order, path_retrieval_order, start, goal);
 
-        return exploration_order;
+        return [exploration_order, path_retrieval_order];
     }
 
-    #explore_impl(grid, exploration_order, start, goal) {
+    #explore_impl(grid, exploration_order, path_retrieval_order, start, goal) {
         //TODO: check if rows * cols <= 255, otherwise initialize the proper matrix type
         const costs = new UInt8MatrixBuilder().build(grid.rows, grid.cols, Number.MAX_SAFE_INTEGER); 
         const q = new PriorityQueue((a, b) => this.#comparator(a, b, costs));
@@ -46,23 +47,25 @@ export class DijkstraPathFindingStrategy extends PathFindingStrategy {
                 if (!this.#isValidPosition(grid, new_pos)) continue;
                 if (grid.get(new_pos[0], new_pos[1]) == this.obstacle_cell_symbol) continue;
                 if (grid.get(new_pos[0], new_pos[1]) == this.goal_cell_symbol) {
-                    // Goal reached
+                    // Wrong goal cell, don't use it for the path
                     if (new_pos[0] != goal[0] || new_pos[1] != goal[1]) continue;
+
+                    // Goal reached
+                    path_retrieval_order[new_pos] = curr_pos;
                     exploration_order.push(new_pos);
-                    console.log(q.size());
-                    console.log(costs.to_string());
                     return;
                 }
 
-                const new_cost = curr_cost + this.#distanceL1(new_pos, goal);
+                const new_cost = curr_cost + 1 + this.#distanceL1(new_pos, goal);
 
                 if (costs.get(new_pos[0], new_pos[1]) <= new_cost) continue;
 
+                path_retrieval_order[new_pos] = curr_pos;
                 costs.set(new_pos[0], new_pos[1], new_cost);
                 q.push(new_pos);
             }
         }
-    } //TODO: add path retrieval to ALL EXPLORATION STRATEGIES
+    }
 
     #sumPositions(pos1, pos2) {
         return [pos1[0] + pos2[0], pos1[1] + pos2[1]];
@@ -81,5 +84,11 @@ export class DijkstraPathFindingStrategy extends PathFindingStrategy {
 
     #distanceL1(curr, goal) {
         return Math.abs(curr[0] - goal[0]) + Math.abs(curr[1] - goal[1]);
+    }
+
+    get comparator() {
+        return {
+            equal: (a, b) => a[0] === b[0] && a[1] === b[1]
+        }
     }
 }

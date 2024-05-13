@@ -51,6 +51,10 @@ export class Queue extends Iterable {
         return this.#head.value();
     }
 
+    top() {
+        return this.head();
+    }
+
     isEmpty() {
         return !this.#tail;
     }

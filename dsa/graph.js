@@ -8,7 +8,7 @@ export class Graph extends Iterable {
     #graph;
     #exploration_strategy;
 
-    constructor(adj_list = [[]], isDirectedGraph = false, exploration_strategy) {
+    constructor(adj_list = [[]], is_directed_graph = false, exploration_strategy) {
         super();
         
         this.#starting_node = adj_list[0][0];
@@ -26,7 +26,7 @@ export class Graph extends Iterable {
             }
 
             this.#graph.get(adj[0]).push(adj[1]);
-            if (!isDirectedGraph) {
+            if (!is_directed_graph) {
                 this.#graph.get(adj[1]).push(adj[0]);
             }
             

@@ -53,15 +53,15 @@
     
     import {
         DFSStrategy
-    } from "./algorithms/graph_exploration/dfs.js";
+    } from "./algorithms/dsa_exploration/graph_exploration/dfs.js";
 
     import {
         BFSStrategy
-    } from "./algorithms/graph_exploration/bfs.js";
+    } from "./algorithms/dsa_exploration/graph_exploration/bfs.js";
 
     import {
         DijkstraPathFindingStrategy
-    } from "./algorithms/path_finding/dijkstra.js";
+    } from "./algorithms/dsa_exploration/path_finding/dijkstra.js";
 
     import {
         SpringEmbedderEadesStrategy
@@ -436,9 +436,8 @@
             //const strategy = new DFSStrategy();
             const strategy = new BFSStrategy();  
             
-            const isDirectedGraph = false;
-            const graph = new Graph(adj_list, isDirectedGraph, strategy); 
-
+            const is_directed_graph = false;
+            const graph = new Graph(adj_list, is_directed_graph, strategy); 
             const visualization_strategy = new SpringEmbedderEadesStrategy(min_x, min_y, max_x, max_y, node_diameter);
             //const visualization_strategy = new SpringEmbedderFruchtermanStrategy(min_x, min_y, max_x, max_y, node_diameter);
             //const visualization_strategy = new ForceDirectedGravityStrategy(min_x, min_y, max_x, max_y, node_diameter);
@@ -605,12 +604,13 @@
         grid.set(9, 3, obstacle_cell_symbol);
         grid.set(1, 0, obstacle_cell_symbol);
         grid.set(1, 1, obstacle_cell_symbol);
+        grid.set(2, 1, obstacle_cell_symbol);
 
         console.log(grid.to_string());
 
         const path_finding_strategy = new DijkstraPathFindingStrategy(free_cell_symbol, obstacle_cell_symbol, goal_cell_symbol);
-        const exploration_order = path_finding_strategy.explore(grid, [0, 0], [9, 4]);
+        const [exploration_order, path_retrieval_order] = path_finding_strategy.explore(grid, [0, 0], [9, 4]);
 
-        console.log(exploration_order);
+        console.log(path_finding_strategy.retrieve_path(path_retrieval_order, [0,0], [9, 4]));
     }
 </script>

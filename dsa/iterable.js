@@ -1,7 +1,5 @@
 export class Iterable { // Abstract class
-    get iterator() { return null };
-    
-    size() { return null; }
+    size() { throw new Error("Not implemented"); }
 
     forEach(callback = () => { }) {
         const iterator = this.iterator;
@@ -25,4 +23,6 @@ export class Iterable { // Abstract class
 
         return str.substring(0, str.length - 1);
     }
+    
+    get iterator() { throw new Error("Not implemented"); };
 }
