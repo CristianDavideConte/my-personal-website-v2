@@ -477,6 +477,7 @@
                 const img_el = document.createElement("img");
                 const node_pos = nodes_pos.get(node);
                 let track_drag = false;
+                let run_physics_update = false;
                 
                 div_el.className = "programming_languages_node";
                 div_el.style.transform = `translate3d(${node_pos[0]}px, ${node_pos[1]}px, 0px)`;
@@ -484,7 +485,9 @@
 
                 div_el.addEventListener("mousedown", () => {
                     if(!enable_drag) return;
+
                     track_drag = true;
+                    run_physics_update = false;
                     div_el.classList.add("dragged");
                 }, {passive: true});
 
@@ -494,6 +497,7 @@
                     const node_pos = nodes_pos.get(node);
                     node_pos[0] += event.movementX;
                     node_pos[1] += event.movementY;
+                    run_physics_update = true;
 
                     move_nodes(false);
                 }, {passive: true});
@@ -503,7 +507,8 @@
 
                     track_drag = false;
                     div_el.classList.remove("dragged");
-                    move_nodes(true);
+
+                    move_nodes(run_physics_update);
                 }, {passive: true});
 
                 div_el.appendChild(img_el);
@@ -611,6 +616,6 @@
         const path_finding_strategy = new DijkstraPathFindingStrategy(free_cell_symbol, obstacle_cell_symbol, goal_cell_symbol);
         const [exploration_order, path_retrieval_order] = path_finding_strategy.explore(grid, [0, 0], [9, 4]);
 
-        console.log(path_finding_strategy.retrieve_path(path_retrieval_order, [0,0], [9, 4]));
+        console.log(path_finding_strategy.retrieve_path(path_retrieval_order, [0,0], [9, 4]).to_string());
     }
 </script>

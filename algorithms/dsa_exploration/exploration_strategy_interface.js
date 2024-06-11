@@ -1,7 +1,11 @@
+import {
+    Stack
+} from "../../dsa/stack.js";
+
 export class ExplorationStrategyInterface {
     retrieve_path(path_retrieval_order, start, goal) {
         const comparator = this.comparator;
-        const path = [goal];
+        const path = new Stack(goal);
         let curr_node = goal;
 
         while (!comparator.equal(curr_node, start)) {
@@ -9,9 +13,9 @@ export class ExplorationStrategyInterface {
             path.push(curr_node);
         }
 
-        return path.reverse();
+        return path;
     };
 
     get comparator() { throw new Error("Not implemented"); }
-    explore(graph) { throw new Error("Not implemented"); };
+    explore() { throw new Error("Not implemented"); };
 }

@@ -6,14 +6,16 @@ export class MatrixInterface extends Iterable {
     #rows;
     #cols;
     #matrix;
+    #builder;
     #size;
 
-    constructor(rows, cols, matrix) { 
+    constructor(rows, cols, matrix, builder = null) { 
         super();
         
         this.#rows = rows;
         this.#cols = cols;
         this.#matrix = matrix;
+        this.#builder = builder; // set only when matrix is constructed via custom builder
         this.#size = this.#rows * this.#cols;
     };
     
@@ -53,6 +55,10 @@ export class MatrixInterface extends Iterable {
 
     size() {
         return this.#size;
+    }
+
+    get builder() {
+        return this.#builder;
     }
 
     get rows() { 

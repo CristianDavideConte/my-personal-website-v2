@@ -4,7 +4,7 @@ import {
 
 export class UInt8MatrixBuilder {
     build(rows, cols, initial_value = 0) { 
-        const matrix = new MatrixInterface(rows, cols, new Uint8Array(rows * cols));
+        const matrix = new MatrixInterface(rows, cols, new Uint8Array(rows * cols), this);
         
         if (initial_value !== 0) {
             matrix.forEach((curr_item, idx) => {

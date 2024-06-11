@@ -21,8 +21,8 @@ export class DijkstraPathFindingStrategy extends PathFindingStrategy {
     }
 
     #explore_impl(grid, exploration_order, path_retrieval_order, start, goal) {
-        //TODO: check if rows * cols <= 255, otherwise initialize the proper matrix type
-        const costs = new UInt8MatrixBuilder().build(grid.rows, grid.cols, Number.MAX_SAFE_INTEGER); 
+        const costs = grid.builder?.build(grid.rows, grid.cols, Number.MAX_SAFE_INTEGER) ??
+                      new UInt8MatrixBuilder().build(grid.rows, grid.cols, Number.MAX_SAFE_INTEGER); // default fallback type of cost matrix
         const q = new PriorityQueue((a, b) => this.#comparator(a, b, costs));
         const exploration_positions = [
             [-1, 0], // top

@@ -6,16 +6,14 @@ import {
     DoublyLinkedList
 } from "./doubly_linked_list.js";
 
-export class Queue extends Iterable {
+export class Stack extends Iterable {
     #head;
-    #tail;
     #size;
 
     constructor(initial_value = null) {
         super();
-        
+
         this.#head = null;
-        this.#tail = null;
         this.#size = 0;
 
         if (initial_value) {
@@ -25,21 +23,7 @@ export class Queue extends Iterable {
 
     push(value) {
         if (!this.#head) {
-            this.#tail = new DoublyLinkedList(value);
-            this.#head = this.#tail;
-        } else {
-            let new_tail = new DoublyLinkedList(value, null, this.#tail);
-            this.#tail._prev = new_tail;
-            this.#tail = new_tail;
-        }
-
-        this.#size++;
-    }
-
-    push_front(value) {
-        if (!this.#head) {
-            this.#tail = new DoublyLinkedList(value);
-            this.#head = this.#tail;
+            this.#head = new DoublyLinkedList(value);
         } else {
             let new_head = new DoublyLinkedList(value, this.#head, null);
             this.#head._next = new_head;
@@ -52,17 +36,12 @@ export class Queue extends Iterable {
     pop() {
         if (this.#size <= 1) {
             this.#head = null;
-            this.#tail = null;
             this.#size = 0;
         } else {
             this.#head = this.#head.prev();
             this.#head._next = null;
             this.#size--;
         }
-    }
-
-    tail() {
-        return this.#tail.value();
     }
 
     head() {
@@ -74,7 +53,7 @@ export class Queue extends Iterable {
     }
 
     isEmpty() {
-        return !this.#tail;
+        return !this.#head;
     }
 
     size() {
