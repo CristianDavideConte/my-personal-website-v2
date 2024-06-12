@@ -631,15 +631,31 @@
         grid.set(1, 1, obstacle_cell_symbol);
         grid.set(2, 1, obstacle_cell_symbol);
 
+        const clear_grid_cell = (grid_cell_id) => {
+            const grid_cell_el = grid_cells_mapping.get(grid_cell_id);
+            grid_cell_el.classList.remove("grid_cell_explored");
+            grid_cell_el.classList.remove("grid_cell_on_path");
+        };
+
         const create_visual_cell = (cell_value) => {
             const div_el = document.createElement("div");
             div_el.className = "grid_cell";
             
-            if(cell_value == obstacle_cell_symbol) {
-                div_el.classList.add("obstacle_cell");
+            if (cell_value == free_cell_symbol) {
+                div_el.addEventListener("click", (event) => {
+                    grid_cells_mapping.keys().forEach(clear_grid_cell)
+                }, {passive: true});
             }
 
-            if(cell_value == goal_cell_symbol && curr_social_network) {
+            if (cell_value == obstacle_cell_symbol) {
+                div_el.classList.add("obstacle_cell");
+
+                div_el.addEventListener("click", (event) => {
+                    grid_cells_mapping.keys().forEach(clear_grid_cell)
+                }, {passive: true});
+            }
+
+            if (cell_value == goal_cell_symbol && curr_social_network) {
                 const i_el = document.createElement("i");
                 i_el.className = curr_social_network;
 
@@ -685,42 +701,48 @@
 
         const path_animation = (exploration_order, path_order) => {
             let num_iter = 0;
-            let milliseconds = 70;
+            let exploration_time_in_milliseconds = 60;
+            let path_time_in_milliseconds = 30;
+
+            document.getElementById("page5").classList.add("animation_in_progress");
 
             exploration_order.forEach(grid_cell => {
-                const grid_cell_el = grid_cells_mapping.get(grid_cell[0] * grid_cols + grid_cell[1]);
-                
+                const grid_cell_id = grid_cell[0] * grid_cols + grid_cell[1];
+                const grid_cell_el = grid_cells_mapping.get(grid_cell_id);
+
+                clear_grid_cell(grid_cell_id);
+
                 setTimeout(() => {
                     grid_cell_el.classList.add("grid_cell_explored");
-                }, milliseconds * num_iter);
+                }, exploration_time_in_milliseconds * num_iter);
 
                 num_iter++;
             });
-
+            
             setTimeout(() => {
-                exploration_order.forEach(grid_cell => {
-                    const grid_cell_el = grid_cells_mapping.get(grid_cell[0] * grid_cols + grid_cell[1]);
-                    grid_cell_el.classList.remove("grid_cell_explored");
-                });
-                
                 num_iter = 0;
+
+                exploration_order.forEach(grid_cell => {
+                    const grid_cell_id = grid_cell[0] * grid_cols + grid_cell[1];
+                    clear_grid_cell(grid_cell_id);
+                });
 
                 path_order.forEach(grid_cell => {
                     const grid_cell_el = grid_cells_mapping.get(grid_cell[0] * grid_cols + grid_cell[1]);
                     
                     setTimeout(() => {
                         grid_cell_el.classList.add("grid_cell_on_path");
-                    }, milliseconds * num_iter);
+                    }, path_time_in_milliseconds * num_iter);
 
                     num_iter++;
                 });
-            }, milliseconds * (num_iter - 1));
+                    
+                setTimeout(() => {
+                    document.getElementById("page5").classList.remove("animation_in_progress");
+                }, path_time_in_milliseconds * num_iter);
+            }, exploration_time_in_milliseconds * (num_iter - 1));
         };
 
         grid.forEach((cell_value) => document.getElementById("page5").appendChild(create_visual_cell(cell_value)));
-
-
-        
-        console.log(exploration_order, path_order);
     }
 </script>

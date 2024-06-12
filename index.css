@@ -98,7 +98,13 @@ body {
     padding: 10%;
 }
 
+#page5.animation_in_progress > .grid_cell {
+	cursor: default;
+    pointer-events: none;
+}
+
 #page5 > .grid_cell {
+	cursor:pointer;
     display: grid;
     justify-content: center;
     align-items: center;
@@ -113,7 +119,6 @@ body {
 
 #page5 > .goal_cell {
 	font-size: 3em;
-	cursor:pointer;
 	-webkit-backface-visibility: hidden; /* Safari Fix */
 	backface-visibility: hidden;         /* Safari Fix */
 }
