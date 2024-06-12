@@ -1,6 +1,7 @@
 export class Iterable { // Abstract class
     size() { throw new Error("Not implemented"); }
 
+    //O(N)
     forEach(callback = () => { }) {
         const iterator = this.iterator;
         let curr_item = iterator.next();
@@ -14,6 +15,7 @@ export class Iterable { // Abstract class
         }
     }
 
+    //O(N)
     to_string() {
         let str = "";
 

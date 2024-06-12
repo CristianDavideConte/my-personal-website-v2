@@ -15,14 +15,17 @@ export class DoublyLinkedList extends Iterable {
         this._next = next;
     }
 
+    //O(1)
     prev() {
         return this._prev;
     }
 
+    //O(1)
     next() {
         return this._next;
     }
 
+    //O(1)
     value() {
         return this._value;
     }

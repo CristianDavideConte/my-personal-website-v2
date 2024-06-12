@@ -9,7 +9,7 @@ export class ExplorationStrategyInterface {
         let curr_node = goal;
 
         while (!comparator.equal(curr_node, start)) {
-            curr_node = path_retrieval_order[curr_node];
+            curr_node = path_retrieval_order.get(curr_node); //iterable array
             path.push(curr_node);
         }
 

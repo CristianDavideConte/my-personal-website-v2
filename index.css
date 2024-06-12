@@ -4,7 +4,7 @@ body {
 
 #page1 {
     display: grid;
-    grid-template-columns: repeat(17, 1fr);
+    grid-template-columns: repeat(17, 1fr); /* 17 is the number of letters of a single phrase in page 1 */ 
     padding: 10%;
 }
 
@@ -88,8 +88,40 @@ body {
  	transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); /* TODO, change easing to elastic */
 }
 
-#page1, 
-#page2, 
-#page3 {
-    //display:none;
+#page5 {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    /* TODO, make 5 depends on the number of cols set in the js, 50 is the width of the grid cells*/
+    grid-template-columns: repeat(5, 50px); 
+    grid-gap: 20px;
+    padding: 10%;
+}
+
+#page5 > .grid_cell {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+    width: 50px;
+    background-color: chocolate;
+}
+
+#page5 > .obstacle_cell {
+    background-color: brown;
+}
+
+#page5 > .goal_cell {
+	font-size: 3em;
+	cursor:pointer;
+	-webkit-backface-visibility: hidden; /* Safari Fix */
+	backface-visibility: hidden;         /* Safari Fix */
+}
+
+#page5 > .grid_cell_explored {
+    background-color: green;
+}
+
+#page5 > .grid_cell_on_path {
+    background-color: blue;
 }

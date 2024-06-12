@@ -35,27 +35,33 @@ export class Graph extends Iterable {
         }
     }
 
+    //O(1)
     degreeOf(node) {
         const nbs = this.#graph.get(node);
         return nbs ? nbs.length : 0;
     }
 
+    //O(1)
     neighborsOf(node) {
         return this.#graph.get(node);
     }
 
+    //O(1)
     graph() {
         return this.#graph;
     }
 
+    //O(1)
     startingNode() {
         return this.#starting_node;
     }
 
+    //O(1)
     nodes() {
         return this.#nodes;
     }
 
+    //O(1)
     size() {
         return this.#nodes.size;
     }

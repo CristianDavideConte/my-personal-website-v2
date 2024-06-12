@@ -1,4 +1,8 @@
 import {
+    IterableArray
+} from "../../../dsa/iterable_array.js";
+
+import {
     GraphExplorationStrategy
 } from "./graph_exploration_strategy_interface.js";
 
@@ -9,7 +13,7 @@ export class DFSStrategy extends GraphExplorationStrategy {
 
         this.#explore_impl(graph.graph(), exploration_order, path_retrieval_order, new Set(), start); 
         
-        return [exploration_order, path_retrieval_order];
+        return [new IterableArray(exploration_order), new IterableArray(path_retrieval_order)];
     }
 
     #explore_impl(graph, exploration_order, path_retrieval_order, seen, start) {

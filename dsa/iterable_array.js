@@ -5,14 +5,25 @@ import {
 export class IterableArray extends Iterable {
     #arr;
 
-    constructor(arr) {
+    constructor(arr = []) {
         super();
         
         this.#arr = arr;
     }
     
+    //O(1)
+    get(key) {
+        return this.#arr[key];
+    }
+
+    //O(1)
+    set(key, value) {
+        this.#arr[key] = value;
+    }
+
+    //O(1)
     size() {
-        return this.#arr.length;
+        return this.#arr.length || Object.keys(this.#arr).length;
     }
 
     get iterator() {

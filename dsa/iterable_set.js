@@ -11,6 +11,7 @@ export class IterableSet extends Iterable {
         this.#set = set;
     }
 
+    //O(1)
     size() {
         return this.#set.size;
     }

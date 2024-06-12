@@ -1,4 +1,8 @@
 import {
+    IterableArray
+} from "../../../dsa/iterable_array.js";
+
+import {
     PriorityQueue
 } from "../../../dsa/priority_queue.js";
 
@@ -17,7 +21,7 @@ export class DijkstraPathFindingStrategy extends PathFindingStrategy {
 
         this.#explore_impl(grid, exploration_order, path_retrieval_order, start, goal);
 
-        return [exploration_order, path_retrieval_order];
+        return [new IterableArray(exploration_order), new IterableArray(path_retrieval_order)];
     }
 
     #explore_impl(grid, exploration_order, path_retrieval_order, start, goal) {

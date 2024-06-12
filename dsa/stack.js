@@ -21,6 +21,7 @@ export class Stack extends Iterable {
         }
     }
 
+    //O(1)
     push(value) {
         if (!this.#head) {
             this.#head = new DoublyLinkedList(value);
@@ -33,6 +34,7 @@ export class Stack extends Iterable {
         this.#size++;
     }
 
+    //O(1)
     pop() {
         if (this.#size <= 1) {
             this.#head = null;
@@ -44,18 +46,22 @@ export class Stack extends Iterable {
         }
     }
 
+    //O(1)
     head() {
         return this.#head.value();
     }
 
+    //O(1)
     top() {
         return this.head();
     }
 
+    //O(1)
     isEmpty() {
         return !this.#head;
     }
 
+    //O(1)
     size() {
         return this.#size;
     }

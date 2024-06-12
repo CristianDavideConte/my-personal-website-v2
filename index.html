@@ -7,10 +7,13 @@
         <title>Cristian D. Conte</title>
         
 		<!-- Preload resources -->
+		<link rel = "preconnect" href = "https://kit.fontawesome.com/f48b5d4594.js" crossorigin = "anonymous"/>
 		<link rel = "preload" href = "./index.css" as = "style"/>
 
 		<!-- Load the stylesheets -->
 		<link rel = "stylesheet" type = "text/css" href = "./index.css"/>
+
+		<script async src = "https://kit.fontawesome.com/45f85de49d.js" crossorigin = "anonymous"></script>
     </head>
 
     <body>
@@ -593,6 +596,18 @@
     
     {   
         //Page 5 elements
+        const social_network_list = [ // font awesome 5 classes
+            "fa-brands fa-linkedin",
+            "fa-brands fa-github",
+            "fa-brands fa-stack-overflow",
+            "fa-regular fa-envelope"
+        ];
+
+        //TODO: shuffle the above list
+        const social_network_iterable_array = new IterableArray(social_network_list);
+        const social_network_list_iterator = social_network_iterable_array.iterator;
+        let curr_social_network = social_network_list_iterator.next();
+
         const grid_rows = 10; //cells
         const grid_cols = 5; //cells
         const contacts_padding_space = 2; //cells
@@ -605,17 +620,107 @@
         const matrix_builder = new UInt8MatrixBuilder(); 
         const grid = matrix_builder.build(grid_rows, grid_cols, free_cell_symbol);
 
+        const path_finding_strategy = new DijkstraPathFindingStrategy(free_cell_symbol, obstacle_cell_symbol, goal_cell_symbol);
+        const grid_cells_mapping = new Map();
+        let grid_cell_id = 0;
+
+        //TODO: make grid building random and automatic
         grid.set(9, 4, goal_cell_symbol);
         grid.set(9, 3, obstacle_cell_symbol);
         grid.set(1, 0, obstacle_cell_symbol);
         grid.set(1, 1, obstacle_cell_symbol);
         grid.set(2, 1, obstacle_cell_symbol);
 
-        console.log(grid.to_string());
+        const create_visual_cell = (cell_value) => {
+            const div_el = document.createElement("div");
+            div_el.className = "grid_cell";
+            
+            if(cell_value == obstacle_cell_symbol) {
+                div_el.classList.add("obstacle_cell");
+            }
 
-        const path_finding_strategy = new DijkstraPathFindingStrategy(free_cell_symbol, obstacle_cell_symbol, goal_cell_symbol);
-        const [exploration_order, path_retrieval_order] = path_finding_strategy.explore(grid, [0, 0], [9, 4]);
+            if(cell_value == goal_cell_symbol && curr_social_network) {
+                const i_el = document.createElement("i");
+                i_el.className = curr_social_network;
 
-        console.log(path_finding_strategy.retrieve_path(path_retrieval_order, [0,0], [9, 4]).to_string());
+                div_el.classList.add("goal_cell");
+                div_el.appendChild(i_el);
+                curr_social_network = social_network_list_iterator.next();
+
+                div_el.addEventListener("click", (event) => {
+                    const [exploration_order, path_order] = find_path_from_to([[0, 0]], [9, 4]) //TODO: change from fixed start/goal to dynamic
+                    path_animation(exploration_order, path_order);
+                }, {passive: true});
+            }
+            
+            grid_cells_mapping.set(grid_cell_id++, div_el);
+
+            return div_el;
+        }
+
+        const find_path_from_to = (starting_points, goal) => {
+            let best_path_retrieval_order_size = Number.MAX_SAFE_INTEGER;
+
+            let best_exploration_order; 
+            let best_path_retrieval_order;
+            let best_path_starting_point;
+
+            starting_points.forEach(start => {
+                const [exploration_order, path_retrieval_order] = path_finding_strategy.explore(grid, start, goal);
+                
+                if(path_retrieval_order.size() < best_path_retrieval_order_size) {
+                    best_path_retrieval_order_size = path_retrieval_order.size();
+ 
+                    best_exploration_order = exploration_order;
+                    best_path_retrieval_order = path_retrieval_order;
+                    best_path_starting_point = start;
+                }
+            });
+
+            return [
+                best_exploration_order, 
+                path_finding_strategy.retrieve_path(best_path_retrieval_order, best_path_starting_point, goal)
+            ];
+        };
+
+        const path_animation = (exploration_order, path_order) => {
+            let num_iter = 0;
+            let milliseconds = 70;
+
+            exploration_order.forEach(grid_cell => {
+                const grid_cell_el = grid_cells_mapping.get(grid_cell[0] * grid_cols + grid_cell[1]);
+                
+                setTimeout(() => {
+                    grid_cell_el.classList.add("grid_cell_explored");
+                }, milliseconds * num_iter);
+
+                num_iter++;
+            });
+
+            setTimeout(() => {
+                exploration_order.forEach(grid_cell => {
+                    const grid_cell_el = grid_cells_mapping.get(grid_cell[0] * grid_cols + grid_cell[1]);
+                    grid_cell_el.classList.remove("grid_cell_explored");
+                });
+                
+                num_iter = 0;
+
+                path_order.forEach(grid_cell => {
+                    const grid_cell_el = grid_cells_mapping.get(grid_cell[0] * grid_cols + grid_cell[1]);
+                    
+                    setTimeout(() => {
+                        grid_cell_el.classList.add("grid_cell_on_path");
+                    }, milliseconds * num_iter);
+
+                    num_iter++;
+                });
+            }, milliseconds * (num_iter - 1));
+        };
+
+        grid.forEach((cell_value) => document.getElementById("page5").appendChild(create_visual_cell(cell_value)));
+
+
+        
+        console.log(exploration_order, path_order);
     }
 </script>
