@@ -10,6 +10,9 @@ export class ExplorationStrategyInterface {
 
         while (!comparator.equal(curr_node, start)) {
             curr_node = path_retrieval_order.get(curr_node); //iterable array
+            
+            if (curr_node === undefined) return new Stack();
+
             path.push(curr_node);
         }
 

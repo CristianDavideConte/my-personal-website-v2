@@ -4,7 +4,7 @@ import {
 
 import {
     GraphVisualizationStrategy
-} from "./strategy_interface.js";
+} from "./graph_visualization_strategy_interface.js";
 
 // Source: https://i11www.iti.kit.edu/_media/teaching/winter2016/graphvis/graphvis-ws16-v6.pdf
 export class SpringEmbedderFruchtermanStrategy extends GraphVisualizationStrategy {

@@ -572,8 +572,8 @@
             nodes.forEach((el, idx) => document.getElementById("page4").appendChild(create_visual_node(el)));
 
             let num_iter = 0;
-            let max_num_iter = 1000;
-            let milliseconds = 0.5;
+            let max_num_iter = 400;
+            let milliseconds = 30;
 
             setTimeout(function update_nodes_and_edges() {
                 if(num_iter == max_num_iter) {
@@ -588,7 +588,7 @@
                     document.getElementById("page4").className || "0"
                 ) + 1; // TODO: debug, remove
 
-                setTimeout(update_nodes_and_edges, milliseconds * num_iter);
+                setTimeout(update_nodes_and_edges, milliseconds);
             }, 0);
         }
     });
@@ -629,6 +629,9 @@
         grid.set(9, 3, obstacle_cell_symbol);
         grid.set(1, 0, obstacle_cell_symbol);
         grid.set(1, 1, obstacle_cell_symbol);
+        grid.set(1, 2, obstacle_cell_symbol);
+        grid.set(1, 3, obstacle_cell_symbol);
+        //grid.set(1, 4, obstacle_cell_symbol);
         grid.set(2, 1, obstacle_cell_symbol);
 
         const clear_grid_cell = (grid_cell_id) => {
@@ -683,9 +686,10 @@
 
             starting_points.forEach(start => {
                 const [exploration_order, path_retrieval_order] = path_finding_strategy.explore(grid, start, goal);
-                
-                if(path_retrieval_order.size() < best_path_retrieval_order_size) {
-                    best_path_retrieval_order_size = path_retrieval_order.size();
+                const new_path_length = path_retrieval_order.size();
+
+                if(new_path_length < best_path_retrieval_order_size) {
+                    best_path_retrieval_order_size = new_path_length;
  
                     best_exploration_order = exploration_order;
                     best_path_retrieval_order = path_retrieval_order;
@@ -740,7 +744,7 @@
                 setTimeout(() => {
                     document.getElementById("page5").classList.remove("animation_in_progress");
                 }, path_time_in_milliseconds * num_iter);
-            }, exploration_time_in_milliseconds * (num_iter - 1));
+            }, exploration_time_in_milliseconds * num_iter);
         };
 
         grid.forEach((cell_value) => document.getElementById("page5").appendChild(create_visual_cell(cell_value)));

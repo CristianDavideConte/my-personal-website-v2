@@ -1,8 +1,4 @@
-import {
-    ExplorationStrategyInterface
-} from "../exploration_strategy_interface.js";
-
-export class PathFindingStrategy extends ExplorationStrategyInterface {
+export class MazeGenerationStrategy {
     #free_cell_symbol;
     #obstacle_cell_symbol;
     #goal_cell_symbol;
@@ -32,4 +28,6 @@ export class PathFindingStrategy extends ExplorationStrategyInterface {
     get visited_cell_symbol() {
         return this.#visited_cell_symbol;
     }
+
+    generate(grid, starting_points, goal_points) { throw new Error("Not implemented"); };
 }
