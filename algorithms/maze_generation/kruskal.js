@@ -4,6 +4,6 @@ import {
 
 export class KruskalMazeGenerationStrategy extends MazeGenerationStrategy {
     generate(grid, starting_points, goal_points) {
-        
+        //TODO
     };
 }
