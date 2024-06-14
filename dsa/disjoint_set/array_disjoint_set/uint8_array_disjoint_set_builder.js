@@ -1,12 +1,12 @@
 import {
     UInt8IterableArrayBuilder
-} from "../../dsa/iterable_array/uint8_iterable_array_builder.js";
+} from "../../iterable_array/uint8_iterable_array_builder.js";
 
 import {
-    DisjointSetInterface 
-} from "./disjoint_set_interface.js";
+    ArrayDisjointSetInterface 
+} from "./array_disjoint_set_interface.js";
 
-export class UInt8DisjointSetBuilder {
+export class UInt8ArrayDisjointSetBuilder {
     build(size) {
         const builder = new UInt8IterableArrayBuilder();
         const parents = builder.build(size);
@@ -17,6 +17,6 @@ export class UInt8DisjointSetBuilder {
             ranks.set(i, 1);
         }
 
-        return new DisjointSetInterface(ranks, parents);
+        return new ArrayDisjointSetInterface(ranks, parents);
     }
 }

@@ -1,14 +1,14 @@
 import {
     UInt8IterableArrayBuilder
-} from "../../dsa/iterable_array/uint8_iterable_array_builder.js";
+} from "../../iterable_array/uint8_iterable_array_builder.js";
 
 import {
     UInt8MatrixBuilder
-} from "../../dsa/matrix/uint8_matrix_builder.js";
+} from "../../matrix/uint8_matrix_builder.js";
 
 import {
-    DisjointSetInterface
-} from "./disjoint_set_interface.js";
+    MatrixDisjointSetInterface
+} from "./matrix_disjoint_set_interface.js";
 
 export class UInt8MatrixDisjointSetBuilder {
     build(rows, cols) {
@@ -17,6 +17,6 @@ export class UInt8MatrixDisjointSetBuilder {
 
         parents.forEach((el, idx) => parents.set_nth(idx, idx));
 
-        return new DisjointSetInterface(ranks, parents);
+        return new MatrixDisjointSetInterface(ranks, parents);
     }
 }

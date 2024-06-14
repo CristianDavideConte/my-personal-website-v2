@@ -21,12 +21,12 @@ export class MatrixInterface extends Iterable {
     
     get(i, j) {
         this.check_bounds(i, j);
-        return this.#arr.get(this.#cols * i + j);
+        return this.#arr.get(this.from_ij_to_idx(i, j));
     };
 
     set(i, j, value) {
         this.check_bounds(i, j);
-        this.#arr.set(this.#cols * i + j, value);
+        this.#arr.set(this.from_ij_to_idx(i, j), value);
     }
 
     get_nth(idx) {
@@ -60,6 +60,14 @@ export class MatrixInterface extends Iterable {
 
     size() {
         return this.#size;
+    }
+
+    from_ij_to_idx(i, j) {
+        return this.#cols * i + j;
+    }
+
+    from_idx_to_ij(idx) {
+        return [idx / this.#cols, idx % this.#cols];
     }
 
     get builder() {
