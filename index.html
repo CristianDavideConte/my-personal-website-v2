@@ -51,10 +51,6 @@
     } from "./dsa/matrix/uint8_matrix_builder.js";
 
     import {
-        linear 
-    } from "./algorithms/linear.js";
-    
-    import {
         DFSStrategy
     } from "./algorithms/dsa_exploration/graph_exploration/dfs.js";
 
@@ -79,21 +75,11 @@
     } from "./algorithms/graph_visualization/force_directed_gravity.js";
 
     import {
-        swap,
-        shuffle, 
-        quicksort,
-        LESSER_FLAG,
-        HIGHER_FLAG,
-        EQUAL_FLAG,
-    } from "./algorithms/sorting.js";
+        QuicksortStrategy
+    } from "./algorithms/sorting/quicksort.js";
 
     window.addEventListener("load", () => {
         {
-            //Create page 1 elements
-            const page1_name_arr = "Cristian D. Conte".split("");
-            const page1_title_arr = "Computer Engineer".split("");
-            let page1_els_arr = page1_name_arr.concat(page1_title_arr);
-
             let create_el_fun = (el_str, idx) => {
                 let p_el = document.createElement("p");
 
@@ -109,21 +95,22 @@
 
                 return p_el;
             }; // TODO: Create factories for turning data into visual elements
-
-            let page1_els = linear(page1_els_arr, create_el_fun);
             
             //Create page 1 effects
-            const custom_swap_shuffling = (arr, i, j) => {
-                swap(arr, i, j);
+            const custom_compare_fun = (el1, el2) => {
+                const el1_idx = Number.parseInt(el1.getAttribute("data-idx"));
+                const el2_idx = Number.parseInt(el2.getAttribute("data-idx"));
+
+                return el1_idx < el2_idx ? sorting_strategy.LESSER_FLAG : sorting_strategy.HIGHER_FLAG;
             };
 
             let milliseconds = 0;
             let increase = 100;
-            const custom_swap_sorting = (arr, i, j) => {
+            const sorting_callback = (dsa, i, j) => {
                 if(i == j) return;
                 
-                const arr_i = arr[i];
-                const arr_j = arr[j];
+                const arr_i = dsa.get(i);
+                const arr_j = dsa.get(j);
 
                 let arr_i_pos, arr_j_pos;
 
@@ -165,8 +152,6 @@
                 arr_j.setAttribute("data-delta-x", arr_j_old_delta_x + delta_x);
                 arr_j.setAttribute("data-delta-y", arr_j_old_delta_y + delta_y);
 
-                swap(arr, i, j);
-
                 milliseconds += increase; //TODO: add a proper easing
                 //increase -= 1;
 
@@ -175,23 +160,19 @@
                     arr_j.style.transform = arr_j_transform;
                 }, milliseconds);
             };
-
-            shuffle(page1_els, custom_swap_shuffling);
             
-            linear(page1_els, (el) => document.getElementById("page1").appendChild(el));
-            
-            quicksort(
-                page1_els,
-                (el1, el2) => {
-                    const el1_idx = Number.parseInt(el1.getAttribute("data-idx"));
-                    const el2_idx = Number.parseInt(el2.getAttribute("data-idx"));
+            //Create page 1 elements
+            const sorting_strategy = new QuicksortStrategy(custom_compare_fun);
 
-                    return el1_idx < el2_idx ? LESSER_FLAG : HIGHER_FLAG;
-                },
-                custom_swap_sorting,
-                0, 
-                page1_els.length - 1
-            );
+            const page1_name_arr = "Cristian D. Conte".split("");
+            const page1_title_arr = "Computer Engineer".split("");
+            const page1_els_arr = new IterableArray(page1_name_arr.concat(page1_title_arr));
+            const page1_els = new IterableArray([], sorting_strategy);
+
+            page1_els_arr.forEach((el, idx) => page1_els.push(create_el_fun(el, idx)));
+            page1_els.shuffle();
+            page1_els.forEach((el, idx) => document.getElementById("page1").appendChild(el));
+            page1_els.sort(0, page1_els.size() - 1, sorting_callback);
         }
         
         {

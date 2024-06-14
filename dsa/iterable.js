@@ -24,6 +24,6 @@ export class Iterable { // Abstract class
         return str.substring(0, str.length - 1);
     }
     
-    size() { throw new Error("Not implemented"); }
+    size() { throw new Error("Not implemented"); };
     get iterator() { throw new Error("Not implemented"); };
 }

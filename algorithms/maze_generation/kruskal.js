@@ -1,9 +1,15 @@
 import {
     MazeGenerationStrategy
-} from "./maze_generation_strategy.js";
+} from "./maze_generation_strategy_interface.js";
 
 export class KruskalMazeGenerationStrategy extends MazeGenerationStrategy {
-    generate(grid, starting_points, goal_points) {
-        //TODO
+    #grid;
+
+    constructor(rows, cols, gridBuilder) {
+        this.#grid = gridBuilder.build(rows, cols, this.free_cell_symbol);
+    }
+
+    generate(starting_points, goal_points, callback = () => { }) {
+
     };
 }

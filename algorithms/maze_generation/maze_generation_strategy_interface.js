@@ -5,8 +5,6 @@ export class MazeGenerationStrategy {
     #visited_cell_symbol;
 
     constructor(free_cell_symbol, obstacle_cell_symbol, goal_cell_symbol, visited_cell_symbol = 1) {
-        super();
-
         this.#free_cell_symbol = free_cell_symbol;
         this.#obstacle_cell_symbol = obstacle_cell_symbol;
         this.#goal_cell_symbol = goal_cell_symbol;
