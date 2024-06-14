@@ -1,4 +1,8 @@
 import {
+    UInt8IterableArrayBuilder
+} from "../iterable_array/uint8_iterable_array_builder.js";
+
+import {
     MatrixInterface
 } from "./matrix_interface.js";
 
@@ -7,7 +11,7 @@ export class UInt8MatrixBuilder {
         return new MatrixInterface(
             rows,
             cols,
-            new Uint8Array(new Array(rows * cols).fill(initial_value)),
+            new UInt8IterableArrayBuilder().build(rows * cols, initial_value),
             this
         );
     };

@@ -94,7 +94,7 @@ export class Queue extends Iterable {
 
         return {
             next: () => {
-                if (!curr_node) return curr_node;
+                if (curr_node == null) return curr_node;
 
                 const node = curr_node;
                 curr_node = curr_node.prev();

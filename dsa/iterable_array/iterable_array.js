@@ -1,6 +1,6 @@
 import {
     Sortable
-} from "./sortable.js";
+} from "../sortable.js";
 
 export class IterableArray extends Sortable {
     #arr;

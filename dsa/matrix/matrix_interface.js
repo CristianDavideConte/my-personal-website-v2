@@ -5,33 +5,38 @@ import {
 export class MatrixInterface extends Iterable {
     #rows;
     #cols;
-    #matrix;
+    #arr; // must implement the Sortable interface
     #builder;
     #size;
 
-    constructor(rows, cols, matrix, builder = null) { 
+    constructor(rows, cols, arr, builder = null) { 
         super();
         
         this.#rows = rows;
         this.#cols = cols;
-        this.#matrix = matrix;
-        this.#builder = builder; // set only when matrix is constructed via custom builder
+        this.#arr = arr;
+        this.#builder = builder; // set only when arr is constructed via custom builder
         this.#size = this.#rows * this.#cols;
     };
     
     get(i, j) {
         this.check_bounds(i, j);
-        return this.#matrix[this.#cols * i + j];
+        return this.#arr.get(this.#cols * i + j);
     };
 
     set(i, j, value) {
         this.check_bounds(i, j);
-        this.#matrix[this.#cols * i + j] = value;
+        this.#arr.set(this.#cols * i + j, value);
+    }
+
+    get_nth(idx) {
+        if (this.#size <= idx) throw new RangeError(`idx should be lesser than ${this.#size}`);
+        return this.#arr.get(idx);
     }
 
     set_nth(idx, value) {
-        if (this.#matrix.length <= idx) throw new RangeError(`idx should be lesser than ${this.#matrix.length}`);
-        this.#matrix[idx] = value;
+        if (this.#size <= idx) throw new RangeError(`idx should be lesser than ${this.#size}`);
+        this.#arr.set(idx, value);
     }
 
     check_bounds(i, j) {

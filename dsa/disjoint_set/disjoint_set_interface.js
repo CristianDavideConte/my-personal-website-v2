@@ -45,7 +45,7 @@ export class DisjointSetInterface extends Iterable {
     }
 
     to_string() {
-        return this.ranks.to_string() + "\n\n" + this.parents.to_string();
+        return this.parents.to_string();
     }
 
     get parents() {

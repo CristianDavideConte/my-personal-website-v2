@@ -1,6 +1,6 @@
 import {
     IterableArray
-} from "../../../dsa/iterable_array.js";
+} from "../../../dsa/iterable_array/iterable_array.js";
 
 import {
     GraphExplorationStrategy
