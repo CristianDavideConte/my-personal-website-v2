@@ -27,5 +27,5 @@ export class MazeGenerationStrategy {
         return this.#visited_cell_symbol;
     }
 
-    generate(grid, starting_points, goal_points) { throw new Error("Not implemented"); };
+    generate() { throw new Error("Not implemented"); };
 }

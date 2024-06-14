@@ -51,6 +51,10 @@
     } from "./dsa/matrix/uint8_matrix_builder.js";
 
     import {
+        UInt8MatrixDisjointSetBuilder
+    } from "./dsa/disjoint_set/uint8_matrix_disjoint_set_builder.js";
+
+    import {
         DFSStrategy
     } from "./algorithms/dsa_exploration/graph_exploration/dfs.js";
 
@@ -77,6 +81,10 @@
     import {
         QuicksortStrategy
     } from "./algorithms/sorting/quicksort.js";
+
+    import {
+        KruskalMazeGenerationStrategy
+    } from "./algorithms/maze_generation/kruskal.js";
 
     window.addEventListener("load", () => {
         {
@@ -182,9 +190,6 @@
                     value: ["Professional Experience"] // FIRST NODE
                 }, 
                 {
-                    value: ["2016", "I.T. Technician", "S.i.c.o.t. S.R.L."] 
-                }, 
-                {
                     value: ["2017", "I.T. Technician", "Lugo Town Hall"] 
                 }, 
                 {
@@ -192,6 +197,12 @@
                 }, 
                 {
                     value: ["2023", "AI / ML Engineer Intern", "SpecialVideo S.R.L."] 
+                },
+                {
+                    value: ["2024", "Backend Software Engineer", "GFT Technologies"] 
+                },
+                {
+                    value: ["2024", "Software Development Engineer", "Amazon"] 
                 },
                 {
                     value: ["Null"] // LAST NODE
@@ -597,9 +608,15 @@
         const obstacle_cell_symbol = 1;
         const goal_cell_symbol = 2;
 
+        
         let obstacles = [];
-        const matrix_builder = new UInt8MatrixBuilder(); 
-        const grid = matrix_builder.build(grid_rows, grid_cols, free_cell_symbol);
+        const grid_builder = new UInt8MatrixBuilder(); 
+        const disjoint_set_builder = new UInt8MatrixDisjointSetBuilder(); 
+        const grid = grid_builder.build(grid_rows, grid_cols, free_cell_symbol);
+
+        const maze_generation_strategy = new KruskalMazeGenerationStrategy(grid_rows, grid_cols, grid_builder, disjoint_set_builder);
+
+        console.log(maze_generation_strategy.disjoint_set.to_string());
 
         const path_finding_strategy = new DijkstraPathFindingStrategy(free_cell_symbol, obstacle_cell_symbol, goal_cell_symbol);
         const grid_cells_mapping = new Map();

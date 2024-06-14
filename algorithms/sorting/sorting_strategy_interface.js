@@ -6,7 +6,7 @@ export class SortingStrategy {
     #compare_fun;
 
     constructor(compare_fun) {
-        this.#compare_fun = compare_fun;
+        this.#compare_fun = compare_fun; // must return LESSER_FLAG, EQUAL_FLAG or HIGHER_FLAG
     }
 
     get LESSER_FLAG() {
