@@ -2,7 +2,7 @@ import {
     Iterable
 } from "../iterable.js";
 
-export class MatrixInterface extends Iterable {
+export class MatrixInterface extends Iterable { //TODO: perhaps make this extends Sortable
     #rows;
     #cols;
     #arr; // must implement the Sortable interface
@@ -67,7 +67,11 @@ export class MatrixInterface extends Iterable {
     }
 
     from_idx_to_ij(idx) {
-        return [idx / this.#cols, idx % this.#cols];
+        return [Math.floor(idx / this.#cols), idx % this.#cols];
+    }
+
+    get iterable_array() {
+        return this.#arr;
     }
 
     get builder() {

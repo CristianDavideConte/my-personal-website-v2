@@ -93,7 +93,7 @@ body {
     justify-content: center;
     align-items: center;
     /* TODO, make 5 depends on the number of cols set in the js, 50 is the width of the grid cells*/
-    grid-template-columns: repeat(5, 50px); 
+    grid-template-columns: repeat(10, 50px); 
     grid-gap: 20px;
     padding: 10%;
 }
@@ -127,6 +127,10 @@ body {
     background-color: green;
 }
 
-#page5 > .grid_cell_on_path {
+#page5 > .free_cell.grid_cell_on_path {
     background-color: blue;
+}
+
+#page5 > .goal_cell.grid_cell_on_path {
+    transform: scale3d(1.2, 1.2, 1.2);
 }

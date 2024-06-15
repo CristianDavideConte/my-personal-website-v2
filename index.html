@@ -593,28 +593,35 @@
             "fa-brands fa-github",
             "fa-brands fa-stack-overflow",
             "fa-regular fa-envelope"
-        ];
-
-        //TODO: shuffle the above list
+        ]; //TODO: shuffle the above list
+        
         const social_network_iterable_array = new IterableArray(social_network_list);
         const social_network_list_iterator = social_network_iterable_array.iterator;
         let curr_social_network = social_network_list_iterator.next();
 
+        // TODO: link these values with the css values of grid page 5
         const grid_rows = 10; //cells
-        const grid_cols = 5; //cells
+        const grid_cols = 10; //cells
         const contacts_padding_space = 2; //cells
 
         const free_cell_symbol = 0;
         const obstacle_cell_symbol = 1;
         const goal_cell_symbol = 2;
-
         
         let obstacles = [];
         const grid_builder = new UInt8MatrixBuilder(); 
         const disjoint_set_builder = new UInt8MatrixDisjointSetBuilder(); 
-        const grid = grid_builder.build(grid_rows, grid_cols, free_cell_symbol);
+        //const grid = grid_builder.build(grid_rows, grid_cols, free_cell_symbol);
 
-        const maze_generation_strategy = new KruskalMazeGenerationStrategy(grid_rows, grid_cols, grid_builder, disjoint_set_builder);
+        const maze_generation_strategy = new KruskalMazeGenerationStrategy(
+            free_cell_symbol, obstacle_cell_symbol, goal_cell_symbol, 
+            grid_rows, grid_cols, grid_builder, disjoint_set_builder
+        );
+        
+        const grid = maze_generation_strategy.generate(
+            [[0, 0]], 
+            [[9, 4]]
+        );
 
         console.log(maze_generation_strategy.disjoint_set.to_string());
 
@@ -623,14 +630,14 @@
         let grid_cell_id = 0;
 
         //TODO: make grid building random and automatic
-        grid.set(9, 4, goal_cell_symbol);
-        grid.set(9, 3, obstacle_cell_symbol);
-        grid.set(1, 0, obstacle_cell_symbol);
-        grid.set(1, 1, obstacle_cell_symbol);
-        grid.set(1, 2, obstacle_cell_symbol);
-        grid.set(1, 3, obstacle_cell_symbol);
+        //grid.set(9, 4, goal_cell_symbol);
+        //grid.set(9, 3, obstacle_cell_symbol);
+        //grid.set(1, 0, obstacle_cell_symbol);
+        //grid.set(1, 1, obstacle_cell_symbol);
+        //grid.set(1, 2, obstacle_cell_symbol);
+        //grid.set(1, 3, obstacle_cell_symbol);
         //grid.set(1, 4, obstacle_cell_symbol);
-        grid.set(2, 1, obstacle_cell_symbol);
+        //grid.set(2, 1, obstacle_cell_symbol);
 
         const clear_grid_cell = (grid_cell_id) => {
             const grid_cell_el = grid_cells_mapping.get(grid_cell_id);
@@ -643,6 +650,8 @@
             div_el.className = "grid_cell";
             
             if (cell_value == free_cell_symbol) {
+                div_el.classList.add("free_cell");
+
                 div_el.addEventListener("click", (event) => {
                     grid_cells_mapping.keys().forEach(clear_grid_cell)
                 }, {passive: true});

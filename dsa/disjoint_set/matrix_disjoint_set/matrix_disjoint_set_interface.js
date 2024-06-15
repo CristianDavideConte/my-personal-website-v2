@@ -10,17 +10,17 @@ export class MatrixDisjointSetInterface extends DisjointSetInterface {
         if (parent_idx === curr_idx) return parent_idx;
 
         const [new_x, new_y] = this.parents.from_idx_to_ij(parent_idx);
-        parent_idx = find(new_x, new_y);
+        parent_idx = this.find(new_x, new_y);
         this.parents.set_nth(curr_idx, parent_idx);
 
         return parent_idx;
     }
 
     union(x1, y1, x2, y2) {
-        const parent_idx_1 = find(x1, y1);
-        const parent_idx_2 = find(x2, y2);
+        const parent_idx_1 = this.find(x1, y1);
+        const parent_idx_2 = this.find(x2, y2);
 
-        if (parent_idx_1 == parent_idx_2) return false;
+        if (parent_idx_1 === parent_idx_2) return false;
 
         const new_rank = this.ranks.get(parent_idx_1) + this.ranks.get(parent_idx_2);
 
